@@ -1,0 +1,6 @@
+name: t13-forms/sitepackage
+label: t13-forms Sitepackage
+dependencies:
+  - typo3/fluid-styled-content
+  - typo3/fluid-styled-content-css
+  - typo3/form

@@ -1,0 +1,70 @@
+type: Form
+identifier: client-variants-example
+label: 'Client Variants Example'
+prototypeName: standard
+
+renderables:
+  - type: Page
+    identifier: page-1
+    label: 'Contact Details'
+    renderables:
+      - type: SingleSelect
+        identifier: country
+        label: 'Country'
+        properties:
+          options:
+            '': '-- Please select --'
+            de: Germany
+            at: Austria
+            ch: Switzerland
+            us: United States
+            other: Other
+        validators:
+          - identifier: NotEmpty
+
+      - type: Text
+        identifier: germanTaxId
+        label: 'German Tax ID (Steuernummer)'
+        properties:
+          clientVariants:
+            - condition: 'formValue("country") == "de"'
+              enabled: true
+        validators:
+          - identifier: NotEmpty
+
+      - type: Text
+        identifier: ustId
+        label: 'VAT ID (USt-IdNr.)'
+        properties:
+          clientVariants:
+            - condition: 'formValue("country") in ["de", "at", "ch"]'
+              enabled: true
+        validators:
+          - identifier: RegularExpression
+            options:
+              regularExpression: '/^[A-Z]{2}[0-9A-Z]+$/'
+
+      - type: Text
+        identifier: stateRegion
+        label: 'State / Region'
+        properties:
+          clientVariants:
+            - condition: 'formValue("country") == "us"'
+              enabled: true
+
+      - type: Textarea
+        identifier: otherCountryDetails
+        label: 'Please specify your country and relevant tax information'
+        properties:
+          clientVariants:
+            - condition: 'formValue("country") == "other"'
+              enabled: true
+        validators:
+          - identifier: NotEmpty
+
+finishersDefinition:
+  EmailToReceiver:
+    options:
+      subject: 'New contact form submission'
+      recipientAddress: admin@example.com
+      senderAddress: noreply@example.com

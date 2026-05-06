@@ -1,0 +1,75 @@
+name: t13-forms/frontend-overrides
+label: 'Sitepackage Form Frontend Overrides'
+priority: 200
+
+prototypes:
+  standard:
+    formElementsDefinition:
+      Form:
+        renderingOptions:
+          partialRootPaths:
+            20: 'EXT:sitepackage/Resources/Private/Frontend/Partials/'
+          templateRootPaths:
+            20: 'EXT:sitepackage/Resources/Private/Frontend/Templates/'
+          useAjax: false
+
+      Text:
+        properties:
+          clientVariants: null
+
+      Textarea:
+        properties:
+          clientVariants: null
+
+      SingleSelect:
+        formEditor:
+          editors:
+            550:
+              identifier: useCombobox
+              templateName: Inspector-CheckboxEditor
+              label: 'Use as searchable combobox'
+              propertyPath: properties.useCombobox
+        properties:
+          useCombobox: false
+          clientVariants: null
+
+      MultiSelect:
+        properties:
+          clientVariants: null
+
+      CountrySelect:
+        formEditor:
+          editors:
+            550:
+              identifier: useCombobox
+              templateName: Inspector-CheckboxEditor
+              label: 'Use as searchable combobox'
+              propertyPath: properties.useCombobox
+        properties:
+          useCombobox: false
+          clientVariants: null
+
+      DatePicker:
+        properties:
+          enableDatePicker: false
+          clientVariants: null
+
+      Checkbox:
+        properties:
+          clientVariants: null
+
+      MultiCheckbox:
+        properties:
+          clientVariants: null
+
+      RadioButton:
+        properties:
+          clientVariants: null
+
+      Hidden:
+        properties:
+          clientVariants: null
+
+      Fieldset:
+        properties:
+          clientVariants: null

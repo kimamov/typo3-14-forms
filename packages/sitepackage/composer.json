@@ -1,0 +1,22 @@
+{
+    "name": "t13-forms/sitepackage",
+    "type": "typo3-cms-extension",
+    "description": "Sitepackage for t13-forms",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": "^14.3",
+        "typo3/cms-frontend": "^14.3",
+        "typo3/cms-fluid-styled-content": "^14.3",
+        "praetorius/vite-asset-collector": "^1.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "T13Forms\\Sitepackage\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "sitepackage"
+        }
+    }
+}

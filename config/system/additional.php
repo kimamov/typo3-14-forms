@@ -1,0 +1,42 @@
+<?php
+
+if (getenv('IS_DDEV_PROJECT') == 'true') {
+    $GLOBALS['TYPO3_CONF_VARS'] = array_replace_recursive(
+        $GLOBALS['TYPO3_CONF_VARS'],
+        [
+            'DB' => [
+                'Connections' => [
+                    'Default' => [
+                        'dbname' => 'db',
+                        'driver' => 'mysqli',
+                        'host' => 'db',
+                        'password' => 'db',
+                        'port' => 3306,
+                        'user' => 'db',
+                    ],
+                ],
+            ],
+            'GFX' => [
+                'processor' => 'ImageMagick',
+                'processor_path' => '/usr/bin/',
+                'processor_path_lzw' => '/usr/bin/',
+            ],
+            'MAIL' => [
+                'transport' => 'smtp',
+                'transport_smtp_encrypt' => false,
+                'transport_smtp_server' => 'localhost:1025',
+            ],
+            'SYS' => [
+                'trustedHostsPattern' => '.*.*',
+                'devIPmask' => '*',
+                'displayErrors' => 1,
+            ],
+            'EXTENSIONS' => [
+                'vite_asset_collector' => [
+                    'devServerUri' => getenv('EXT_VITE_DEV_SERVER_URI') ?: 'auto',
+                    'useDevServer' => getenv('EXT_VITE_USE_DEV_SERVER') ?: 'auto',
+                ],
+            ],
+        ]
+    );
+}

@@ -1,0 +1,14 @@
+page = PAGE
+page {
+    10 = FLUIDTEMPLATE
+    10 {
+        templateName = Default
+        templateRootPaths.10 = EXT:sitepackage/Resources/Private/Templates/Pages/
+        layoutRootPaths.10 = EXT:sitepackage/Resources/Private/Layouts/
+        partialRootPaths.10 = EXT:sitepackage/Resources/Private/Partials/
+    }
+}
+
+plugin.tx_form.view {
+    templateRootPaths.20 = EXT:sitepackage/Resources/Private/Frontend/Templates/
+}

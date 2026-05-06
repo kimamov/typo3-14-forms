@@ -1,0 +1,9 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
+      xmlns:sitepackage="http://typo3.org/ns/T13Forms/Sitepackage/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<f:if condition="{formConfiguration}">
+    <formvh:render overrideConfiguration="{sitepackage:form.mergeAjaxSetting(configuration: formConfiguration, useAjax: settings.useAjax)}" />
+    <f:flashMessages />
+</f:if>
+</html>
