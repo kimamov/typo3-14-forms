@@ -6,6 +6,12 @@ const NATIVE_CONSTRAINT_ATTRS = [
   'required', 'pattern', 'minlength', 'maxlength', 'min', 'max', 'step',
 ] as const;
 
+export interface FieldControllerOptions {
+  validate?: (value: string, rules: ValidatorRule[], defaultValidate: () => ValidatorResult) => ValidatorResult;
+  onServerErrors?: (errors: string[], fieldName: string) => string[];  // transform/filter errors
+  renderErrors?: (errors: string[], ctx: FieldController) => void
+}
+
 export class FieldController implements FieldPluginHost {
   readonly name: string;
   private readonly wrapper: HTMLElement;
@@ -23,7 +29,9 @@ export class FieldController implements FieldPluginHost {
   private _serverErrors: string[] = [];
   private _serverErrorValue: string | null = null;
 
-  constructor(wrapper: HTMLElement) {
+  private options: FieldControllerOptions={};
+
+  constructor(wrapper: HTMLElement, options: FieldControllerOptions={}) {
     this.wrapper = wrapper;
     this.name = wrapper.getAttribute('data-form-field') ?? '';
 
@@ -32,6 +40,8 @@ export class FieldController implements FieldPluginHost {
       throw new Error(`[FormsModule] No input found in field "${this.name}"`);
     }
     this.input = input;
+
+    this.options=options;
 
     this.errorsEl = this.findErrorsElement();
     this.rules = this.parseRules();
@@ -303,6 +313,16 @@ export class FieldController implements FieldPluginHost {
     return this.wrapper.querySelector(`.${CSS_CLASSES.errorMsgClass}`);
   }
 
+  protected renderErrors(errors: string[]){
+    if(this.options.renderErrors){
+      this.options.renderErrors(errors, this);
+    } else if (this.errorsEl) {
+      this.errorsEl.innerHTML = errors
+        .map((msg) => this.escapeHtml(msg))
+        .join('<br/>');
+    }
+  }
+
   private updateDOM(isValid: boolean, errors: string[]): void {
     if (isValid) {
       this.input.classList.remove(CSS_CLASSES.errorClass);
@@ -322,6 +342,8 @@ export class FieldController implements FieldPluginHost {
         .join('<br/>');
     }
   }
+
+  
 
   private addErrorsToDescribedBy(): void {
     if (!this.errorsEl?.id) return;
