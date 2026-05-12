@@ -7,3 +7,4 @@ nbproject
 /public/*
 !/public/.htaccess
 /eff
+/node_modules
