@@ -14,10 +14,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 final class OptionsImportServiceTest extends TestCase
 {
-    /**
-     * Files returned by the mock always have a combined identifier inside
-     * the provider directory so the path-guard passes.
-     */
     private function createService(File $file): OptionsImportService
     {
         $resourceFactory = $this->createMock(ResourceFactory::class);

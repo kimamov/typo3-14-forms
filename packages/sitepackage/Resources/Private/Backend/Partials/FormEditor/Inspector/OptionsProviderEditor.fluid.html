@@ -1,15 +1,17 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-<div class="formeditor-inspector-element" data-identifier="optionsImportEditor">
+<div class="formeditor-inspector-element" data-identifier="optionsProviderEditor">
     <div class="form-group">
         <label class="form-label">
             <span data-template-property="label"></span>
         </label>
         <div class="form-description">
-            Select a CSV or JSON file from the <code>options_providers</code> directory, then click Import.
+            Select a CSV or JSON file from the <code>options_providers</code> directory.
+            Options are resolved from this file each time the form is rendered &ndash;
+            they are <strong>not</strong> stored in the form definition.
         </div>
         <div class="mb-2">
             <select class="form-select form-select-sm"
-                    data-identifier="optionsImportFileSelect">
+                    data-identifier="optionsProviderFileSelect">
                 <option value="">-- loading files --</option>
             </select>
         </div>
@@ -18,21 +20,27 @@
                 <label class="form-label form-label-sm">Value column</label>
                 <input type="text"
                        class="form-control form-control-sm"
-                       data-identifier="optionsImportValueColumn"
+                       data-identifier="optionsProviderValueColumn"
                        value="value" />
             </div>
             <div class="col">
                 <label class="form-label form-label-sm">Label column</label>
                 <input type="text"
                        class="form-control form-control-sm"
-                       data-identifier="optionsImportLabelColumn"
+                       data-identifier="optionsProviderLabelColumn"
                        value="label" />
             </div>
         </div>
-        <button type="button" class="btn btn-default btn-sm" data-identifier="optionsImportButton">
-            Import options
+        <button type="button" class="btn btn-default btn-sm"
+                data-identifier="optionsProviderPreviewBtn">
+            Preview options
         </button>
-        <div class="form-text mt-1" data-identifier="optionsImportStatus"></div>
+        <button type="button" class="btn btn-danger btn-sm ms-1" style="display:none;"
+                data-identifier="optionsProviderClearBtn">
+            Remove provider
+        </button>
+        <div class="form-text mt-1" data-identifier="optionsProviderStatus"></div>
+        <div class="mt-2" style="display:none;" data-identifier="optionsProviderPreview"></div>
     </div>
 </div>
 </html>

@@ -1,9 +1,9 @@
 /**
- * Custom inspector editor for importing select/radio/checkbox options from
- * a JSON or CSV file stored in fileadmin/options_providers/.
+ * Form Editor inspector module for the "Options Provider" feature.
  *
- * Renders a dropdown populated from the server-side file listing, plus
- * value/label column inputs and an import button.
+ * Instead of importing options into the YAML, this saves only a lightweight
+ * reference (file, columns) as `properties.optionsProvider`. The actual
+ * options are resolved at render time by a PSR-14 event listener.
  */
 import AjaxRequest from '@typo3/core/ajax/ajax-request.js';
 
@@ -20,11 +20,7 @@ function getCurrentlySelectedFormElement() {
 async function populateFileDropdown(selectEl) {
   const ajaxUrl = TYPO3.settings.ajaxUrls.sitepackage_options_import_files;
   if (!ajaxUrl) {
-    selectEl.innerHTML = '';
-    const errOpt = document.createElement('option');
-    errOpt.value = '';
-    errOpt.textContent = 'AJAX route not registered \u2013 flush TYPO3 caches';
-    selectEl.appendChild(errOpt);
+    selectEl.innerHTML = '<option value="">AJAX route not registered \u2013 flush TYPO3 caches</option>';
     return;
   }
 
@@ -68,56 +64,109 @@ async function populateFileDropdown(selectEl) {
         detail = 'HTTP ' + (err.response.status || 'error');
       }
     }
-    selectEl.innerHTML = '';
-    const errOpt = document.createElement('option');
-    errOpt.value = '';
-    errOpt.textContent = 'Error: ' + detail;
-    selectEl.appendChild(errOpt);
+    selectEl.innerHTML = '<option value="">Error: ' + detail + '</option>';
   }
 }
 
-async function renderOptionsImportEditor(editorConfiguration, editorHtml) {
+function renderPreviewTable(previewEl, options) {
+  const entries = Object.entries(options);
+  const count = entries.length;
+  const PREVIEW_LIMIT = 10;
+
+  let html = '<table class="table table-sm table-bordered mb-0">'
+    + '<thead><tr><th>Value</th><th>Label</th></tr></thead><tbody>';
+
+  const slice = entries.slice(0, PREVIEW_LIMIT);
+  for (const [value, label] of slice) {
+    const v = String(value).replace(/</g, '&lt;');
+    const l = String(label).replace(/</g, '&lt;');
+    html += '<tr><td><code>' + v + '</code></td><td>' + l + '</td></tr>';
+  }
+
+  html += '</tbody></table>';
+
+  if (count > PREVIEW_LIMIT) {
+    html += '<small class="text-muted">\u2026 and ' + (count - PREVIEW_LIMIT) + ' more (' + count + ' total)</small>';
+  }
+
+  previewEl.innerHTML = html;
+  previewEl.style.display = '';
+}
+
+async function renderOptionsProviderEditor(editorConfiguration, editorHtml) {
   const formElement = getCurrentlySelectedFormElement();
 
-  const fileSelect = editorHtml.querySelector('[data-identifier="optionsImportFileSelect"]');
-  const valueColInput = editorHtml.querySelector('[data-identifier="optionsImportValueColumn"]');
-  const labelColInput = editorHtml.querySelector('[data-identifier="optionsImportLabelColumn"]');
-  const importBtn = editorHtml.querySelector('[data-identifier="optionsImportButton"]');
-  const statusEl = editorHtml.querySelector('[data-identifier="optionsImportStatus"]');
+  const fileSelect = editorHtml.querySelector('[data-identifier="optionsProviderFileSelect"]');
+  const valueColInput = editorHtml.querySelector('[data-identifier="optionsProviderValueColumn"]');
+  const labelColInput = editorHtml.querySelector('[data-identifier="optionsProviderLabelColumn"]');
+  const previewBtn = editorHtml.querySelector('[data-identifier="optionsProviderPreviewBtn"]');
+  const clearBtn = editorHtml.querySelector('[data-identifier="optionsProviderClearBtn"]');
+  const statusEl = editorHtml.querySelector('[data-identifier="optionsProviderStatus"]');
+  const previewEl = editorHtml.querySelector('[data-identifier="optionsProviderPreview"]');
 
-  if (!fileSelect || !importBtn || !statusEl) {
+  if (!fileSelect || !previewBtn || !statusEl) {
     return;
   }
 
   await populateFileDropdown(fileSelect);
 
-  const existingImport = formElement.get('properties.optionsImport');
-  if (existingImport && existingImport.source) {
-    fileSelect.value = existingImport.source;
-    if (existingImport.valueColumn) {
-      valueColInput.value = existingImport.valueColumn;
+  const existingProvider = formElement.get('properties.optionsProvider');
+  if (existingProvider && existingProvider.source) {
+    fileSelect.value = existingProvider.source;
+    if (existingProvider.valueColumn) {
+      valueColInput.value = existingProvider.valueColumn;
     }
-    if (existingImport.labelColumn) {
-      labelColInput.value = existingImport.labelColumn;
+    if (existingProvider.labelColumn) {
+      labelColInput.value = existingProvider.labelColumn;
     }
-    statusEl.textContent = 'Last import: ' + (existingImport.importedCount || 0) +
-      ' options on ' + (existingImport.importedAt || 'unknown');
-    statusEl.classList.remove('text-danger');
+    statusEl.textContent = 'Provider active: ' + existingProvider.source;
     statusEl.classList.add('text-muted');
+    clearBtn.style.display = '';
   }
 
-  importBtn.addEventListener('click', async () => {
+  function saveProvider() {
     const file = fileSelect.value;
     if (!file) {
-      statusEl.textContent = 'Please select a file first.';
-      statusEl.classList.add('text-danger');
+      formElement.set('properties.optionsProvider', null);
+      clearBtn.style.display = 'none';
+      statusEl.textContent = 'Provider removed. Save the form to persist.';
+      statusEl.className = 'form-text mt-1 text-warning';
+      previewEl.style.display = 'none';
       return;
     }
 
-    importBtn.disabled = true;
-    statusEl.textContent = 'Importing\u2026';
-    statusEl.classList.remove('text-danger');
-    statusEl.classList.add('text-muted');
+    const provider = {
+      source: file,
+      valueColumn: valueColInput.value.trim() || 'value',
+      labelColumn: labelColInput.value.trim() || 'label',
+    };
+
+    formElement.set('properties.optionsProvider', provider);
+    clearBtn.style.display = '';
+    statusEl.textContent = 'Provider set: ' + file + '. Save the form to persist.';
+    statusEl.className = 'form-text mt-1 text-success';
+  }
+
+  fileSelect.addEventListener('change', saveProvider);
+  valueColInput.addEventListener('change', saveProvider);
+  labelColInput.addEventListener('change', saveProvider);
+
+  clearBtn.addEventListener('click', () => {
+    fileSelect.value = '';
+    saveProvider();
+  });
+
+  previewBtn.addEventListener('click', async () => {
+    const file = fileSelect.value;
+    if (!file) {
+      statusEl.textContent = 'Please select a file first.';
+      statusEl.className = 'form-text mt-1 text-danger';
+      return;
+    }
+
+    previewBtn.disabled = true;
+    statusEl.textContent = 'Loading preview\u2026';
+    statusEl.className = 'form-text mt-1 text-muted';
 
     try {
       const response = await new AjaxRequest(TYPO3.settings.ajaxUrls.sitepackage_options_import)
@@ -130,95 +179,22 @@ async function renderOptionsImportEditor(editorConfiguration, editorHtml) {
       const result = await response.resolve();
 
       if (!result.success) {
-        throw new Error(result.error || 'Import failed.');
+        throw new Error(result.error || 'Preview failed.');
       }
 
-      formElement.set('properties.options', result.options);
-      formElement.set('properties.optionsImport', result.optionsImport);
+      const count = Object.keys(result.options).length;
+      statusEl.textContent = count + ' options found in ' + file;
+      statusEl.className = 'form-text mt-1 text-success';
 
-      const count = result.optionsImport.importedCount;
-      const source = result.optionsImport.source;
-      statusEl.textContent = 'Imported ' + count + ' options from ' + source +
-        '. Save the form to persist, or click the element again to see the options grid.';
-      statusEl.classList.remove('text-danger');
-      statusEl.classList.add('text-success');
+      renderPreviewTable(previewEl, result.options);
     } catch (err) {
-      const message = err.message || 'Import failed.';
-      statusEl.textContent = message;
-      statusEl.classList.remove('text-success', 'text-muted');
-      statusEl.classList.add('text-danger');
+      statusEl.textContent = err.message || 'Preview failed.';
+      statusEl.className = 'form-text mt-1 text-danger';
+      previewEl.style.display = 'none';
     } finally {
-      importBtn.disabled = false;
+      previewBtn.disabled = false;
     }
   });
-}
-
-const COLLAPSE_THRESHOLD = 20;
-
-function collapsePropertyGridIfLarge(editorConfiguration, editorHtml) {
-  if (editorConfiguration.templateName !== 'Inspector-PropertyGridEditor') {
-    return;
-  }
-  if (editorConfiguration.propertyPath !== 'properties.options') {
-    return;
-  }
-
-  const gridEl = editorHtml.querySelector('typo3-form-property-grid-editor');
-  if (!gridEl) {
-    return;
-  }
-
-  const checkAndCollapse = () => {
-    const entries = gridEl.entries;
-    if (!entries || entries.length <= COLLAPSE_THRESHOLD) {
-      return;
-    }
-
-    if (editorHtml.querySelector('[data-identifier="optionsGridToggle"]')) {
-      return;
-    }
-
-    const wrapper = gridEl.parentElement;
-    if (!wrapper) {
-      return;
-    }
-
-    gridEl.style.display = 'none';
-
-    const toggleBar = document.createElement('div');
-    toggleBar.setAttribute('data-identifier', 'optionsGridToggle');
-    toggleBar.style.cssText = 'margin-bottom: 8px;';
-
-    const toggleBtn = document.createElement('button');
-    toggleBtn.type = 'button';
-    toggleBtn.className = 'btn btn-default btn-sm';
-    toggleBtn.textContent = 'Show all ' + entries.length + ' options';
-
-    let expanded = false;
-    toggleBtn.addEventListener('click', () => {
-      expanded = !expanded;
-      gridEl.style.display = expanded ? '' : 'none';
-      toggleBtn.textContent = expanded
-        ? 'Hide options (' + (gridEl.entries?.length ?? entries.length) + ' entries)'
-        : 'Show all ' + (gridEl.entries?.length ?? entries.length) + ' options';
-    });
-
-    toggleBar.appendChild(toggleBtn);
-    wrapper.insertBefore(toggleBar, gridEl);
-  };
-
-  if (gridEl.entries && gridEl.entries.length > 0) {
-    checkAndCollapse();
-  } else {
-    const observer = new MutationObserver(() => {
-      if (gridEl.entries && gridEl.entries.length > 0) {
-        observer.disconnect();
-        checkAndCollapse();
-      }
-    });
-    observer.observe(gridEl, { childList: true, subtree: true, attributes: true });
-    setTimeout(() => observer.disconnect(), 3000);
-  }
 }
 
 export function bootstrap(formEditorApp) {
@@ -227,10 +203,9 @@ export function bootstrap(formEditorApp) {
   _formEditorApp.getPublisherSubscriber().subscribe(
     'view/inspector/editor/insert/perform',
     function (topic, args) {
-      if (args[0].templateName === 'Inspector-OptionsImportEditor') {
-        renderOptionsImportEditor(args[0], args[1]);
+      if (args[0].templateName === 'Inspector-OptionsProviderEditor') {
+        renderOptionsProviderEditor(args[0], args[1]);
       }
-      collapsePropertyGridIfLarge(args[0], args[1]);
     }
   );
 }

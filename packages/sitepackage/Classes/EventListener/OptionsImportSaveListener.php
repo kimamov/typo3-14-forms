@@ -8,10 +8,11 @@ use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Form\Event\BeforeFormIsSavedEvent;
 
 /**
- * Normalizes properties.optionsImport metadata and ensures properties.options
- * are clean strings before a form definition is persisted.
+ * Ensures that when an element uses `properties.optionsProvider`,
+ * the generated `properties.options` are NOT persisted in the YAML.
+ * Only the lightweight provider reference is kept.
  */
-#[AsEventListener('t13forms/options-import-save-guard')]
+#[AsEventListener('t13forms/options-provider-save-guard')]
 final class OptionsImportSaveListener
 {
     private const OPTION_ELEMENT_TYPES = [
@@ -19,6 +20,12 @@ final class OptionsImportSaveListener
         'MultiSelect',
         'RadioButton',
         'MultiCheckbox',
+    ];
+
+    private const ALLOWED_PROVIDER_KEYS = [
+        'source',
+        'valueColumn',
+        'labelColumn',
     ];
 
     public function __invoke(BeforeFormIsSavedEvent $event): void
@@ -53,21 +60,18 @@ final class OptionsImportSaveListener
 
     private function normalizeElement(array &$element): void
     {
-        $import = $element['properties']['optionsImport'] ?? null;
-        if (!is_array($import) || ($import === [])) {
-            unset($element['properties']['optionsImport']);
+        $provider = $element['properties']['optionsProvider'] ?? null;
+
+        if (!is_array($provider) || empty($provider['source'])) {
+            unset($element['properties']['optionsProvider']);
             return;
         }
 
-        $allowed = ['source', 'fileUid', 'format', 'valueColumn', 'labelColumn', 'importedAt', 'importedHash', 'importedCount'];
-        $element['properties']['optionsImport'] = array_intersect_key($import, array_flip($allowed));
+        $element['properties']['optionsProvider'] = array_intersect_key(
+            $provider,
+            array_flip(self::ALLOWED_PROVIDER_KEYS),
+        );
 
-        if (isset($element['properties']['options']) && is_array($element['properties']['options'])) {
-            $clean = [];
-            foreach ($element['properties']['options'] as $value => $label) {
-                $clean[(string)$value] = (string)$label;
-            }
-            $element['properties']['options'] = $clean;
-        }
+        unset($element['properties']['options']);
     }
 }

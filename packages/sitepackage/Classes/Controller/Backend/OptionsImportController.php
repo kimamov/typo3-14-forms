@@ -38,6 +38,10 @@ final class OptionsImportController
         ]);
     }
 
+    /**
+     * Parses a file and returns the options as a preview.
+     * Nothing is persisted -- the JS uses this for previewing only.
+     */
     public function importAction(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
@@ -64,7 +68,7 @@ final class OptionsImportController
         return new JsonResponse([
             'success' => true,
             'options' => $result->options,
-            'optionsImport' => $result->metadata,
+            'count' => count($result->options),
         ]);
     }
 }

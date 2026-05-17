@@ -6,7 +6,7 @@ namespace T13Forms\Sitepackage\Form\OptionsImport;
 
 /**
  * @param array<string, string> $options   value => label map
- * @param array<string, mixed>  $metadata  stored as properties.optionsImport
+ * @param array<string, mixed>  $metadata  import metadata (source, format, hash, etc.)
  */
 final readonly class ImportResult
 {

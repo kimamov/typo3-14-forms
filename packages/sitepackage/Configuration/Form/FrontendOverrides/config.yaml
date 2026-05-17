@@ -12,7 +12,7 @@ prototypes:
         additionalViewModelModules:
           10: '@t13-forms/sitepackage/backend/form-editor/options-import-editor.js'
       formEditorPartials:
-        Inspector-OptionsImportEditor: Inspector/OptionsImportEditor
+        Inspector-OptionsProviderEditor: Inspector/OptionsProviderEditor
 
     formElementsDefinition:
       Form:
@@ -35,10 +35,10 @@ prototypes:
         formEditor:
           editors:
             290:
-              identifier: optionsImport
-              templateName: Inspector-OptionsImportEditor
-              label: 'Import options from file'
-              propertyPath: properties.optionsImport
+              identifier: optionsProvider
+              templateName: Inspector-OptionsProviderEditor
+              label: 'Options provider file'
+              propertyPath: properties.optionsProvider
             550:
               identifier: useCombobox
               templateName: Inspector-CheckboxEditor
@@ -47,19 +47,19 @@ prototypes:
         properties:
           useCombobox: false
           clientVariants: null
-          optionsImport: null
+          optionsProvider: null
 
       MultiSelect:
         formEditor:
           editors:
             290:
-              identifier: optionsImport
-              templateName: Inspector-OptionsImportEditor
-              label: 'Import options from file'
-              propertyPath: properties.optionsImport
+              identifier: optionsProvider
+              templateName: Inspector-OptionsProviderEditor
+              label: 'Options provider file'
+              propertyPath: properties.optionsProvider
         properties:
           clientVariants: null
-          optionsImport: null
+          optionsProvider: null
 
       CountrySelect:
         formEditor:
@@ -86,25 +86,25 @@ prototypes:
         formEditor:
           editors:
             290:
-              identifier: optionsImport
-              templateName: Inspector-OptionsImportEditor
-              label: 'Import options from file'
-              propertyPath: properties.optionsImport
+              identifier: optionsProvider
+              templateName: Inspector-OptionsProviderEditor
+              label: 'Options provider file'
+              propertyPath: properties.optionsProvider
         properties:
           clientVariants: null
-          optionsImport: null
+          optionsProvider: null
 
       RadioButton:
         formEditor:
           editors:
             290:
-              identifier: optionsImport
-              templateName: Inspector-OptionsImportEditor
-              label: 'Import options from file'
-              propertyPath: properties.optionsImport
+              identifier: optionsProvider
+              templateName: Inspector-OptionsProviderEditor
+              label: 'Options provider file'
+              propertyPath: properties.optionsProvider
         properties:
           clientVariants: null
-          optionsImport: null
+          optionsProvider: null
 
       Hidden:
         properties:
