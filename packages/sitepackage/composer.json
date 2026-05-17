@@ -5,6 +5,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "typo3/cms-core": "^14.3",
+        "typo3/cms-form": "^14.3",
         "typo3/cms-frontend": "^14.3",
         "typo3/cms-fluid-styled-content": "^14.3",
         "praetorius/vite-asset-collector": "^1.16"
@@ -12,6 +13,11 @@
     "autoload": {
         "psr-4": {
             "T13Forms\\Sitepackage\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "T13Forms\\Sitepackage\\Tests\\": "Tests/"
         }
     },
     "extra": {

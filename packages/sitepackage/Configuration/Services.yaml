@@ -6,3 +6,6 @@ services:
 
   T13Forms\Sitepackage\:
     resource: '../Classes/*'
+
+  T13Forms\Sitepackage\Controller\Backend\OptionsImportController:
+    public: true

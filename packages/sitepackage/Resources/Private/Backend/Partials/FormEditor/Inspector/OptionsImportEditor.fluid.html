@@ -1,0 +1,38 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="formeditor-inspector-element" data-identifier="optionsImportEditor">
+    <div class="form-group">
+        <label class="form-label">
+            <span data-template-property="label"></span>
+        </label>
+        <div class="form-description">
+            Select a CSV or JSON file from the <code>options_providers</code> directory, then click Import.
+        </div>
+        <div class="mb-2">
+            <select class="form-select form-select-sm"
+                    data-identifier="optionsImportFileSelect">
+                <option value="">-- loading files --</option>
+            </select>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <label class="form-label form-label-sm">Value column</label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       data-identifier="optionsImportValueColumn"
+                       value="value" />
+            </div>
+            <div class="col">
+                <label class="form-label form-label-sm">Label column</label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       data-identifier="optionsImportLabelColumn"
+                       value="label" />
+            </div>
+        </div>
+        <button type="button" class="btn btn-default btn-sm" data-identifier="optionsImportButton">
+            Import options
+        </button>
+        <div class="form-text mt-1" data-identifier="optionsImportStatus"></div>
+    </div>
+</div>
+</html>
