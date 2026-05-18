@@ -34,27 +34,33 @@ ctrl.on('valid', (state) => {
 
 ## With a Plugin
 
-Attach a plugin by registry key, class, or instance:
+Pass a `plugin` in the options — by registry key, class, or instance:
 
 ```typescript
 // By registry key (lazy-loaded)
-const comboCtrl = initField(mySelect, 'combobox');
+const comboCtrl = initField(mySelect, { plugin: 'combobox' });
 
 // By class (instant)
 import ComboboxPlugin from './plugins/combobox';
-const comboCtrl2 = initField(mySelect, ComboboxPlugin);
+const comboCtrl2 = initField(mySelect, { plugin: ComboboxPlugin });
 
 // By instance (pre-configured)
 const plugin = new ComboboxPlugin();
-const comboCtrl3 = initField(mySelect, plugin);
+const comboCtrl3 = initField(mySelect, { plugin });
+```
+
+For convenience, a bare plugin argument is also accepted:
+
+```typescript
+const comboCtrl = initField(mySelect, 'combobox');
 ```
 
 ## With Custom Options
 
-Pass `FieldControllerOptions` as the third argument:
+Pass an `InitFieldOptions` object as the second argument:
 
 ```typescript
-const ctrl = initField(myElement, undefined, {
+const ctrl = initField(myElement, {
   validate(value, rules, defaultValidate) {
     const result = defaultValidate();
     if (result.isValid && value.includes('admin')) {

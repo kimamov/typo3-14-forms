@@ -27,7 +27,7 @@ export function testStandaloneCombobox(): void {
   document.body.prepend(container);
 
   const wrapper = container.querySelector<HTMLElement>('[data-form-field="country"]')!;
-  const field = initField(wrapper, ComboboxPlugin);
+  const field = initField(wrapper, { plugin: ComboboxPlugin });
 
   field.setChangeCallback((state) => {
     console.log('[test] field state changed:', state);

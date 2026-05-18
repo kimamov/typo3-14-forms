@@ -209,7 +209,7 @@ Override the validation pipeline for a specific field using `FieldControllerOpti
 ```typescript
 import { initField } from 'formz';
 
-const ctrl = initField(document.getElementById('confirm-password')!, undefined, {
+const ctrl = initField(document.getElementById('confirm-password')!, {
   validate(value, rules, defaultValidate) {
     const result = defaultValidate();
     if (!result.isValid) return result;
@@ -228,7 +228,7 @@ const ctrl = initField(document.getElementById('confirm-password')!, undefined, 
 Replace the default error display with your own:
 
 ```typescript
-const ctrl = initField(myElement, undefined, {
+const ctrl = initField(myElement, {
   renderErrors(errors, fieldCtrl) {
     const container = fieldCtrl.element.querySelector('.my-errors');
     if (!container) return;

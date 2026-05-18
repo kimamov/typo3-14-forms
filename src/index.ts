@@ -6,6 +6,7 @@ export { registerDefaultValidators, registerValidator } from './forms/validators
 export { ClientVariantsPlugin } from './forms/plugins/client-variants/index';
 export { createTypo3Submit } from './typo3/submit';
 export { initField } from './forms/init-field';
+export type { InitFieldOptions, PluginArg } from './forms/init-field';
 export { initTypo3Forms } from './typo3/index';
 
 export type {

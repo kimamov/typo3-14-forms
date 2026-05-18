@@ -1226,11 +1226,29 @@ function V(e) {
 }
 //#endregion
 //#region src/forms/init-field.ts
-function H(e, t, n) {
-	let r = new C(G(e), n);
-	return U(r, t ?? r.fieldType), r;
+function H(e, t) {
+	let { plugin: n, fieldOptions: r } = W(t), i = new C(q(e), r);
+	return G(i, n ?? i.fieldType), i;
 }
-function U(e, t) {
+function U(e) {
+	return typeof e == "string" || typeof e == "function" ? !0 : typeof e == "object" && !!e && "init" in e && "destroy" in e;
+}
+function W(e) {
+	if (e === void 0) return {
+		plugin: void 0,
+		fieldOptions: void 0
+	};
+	if (U(e)) return {
+		plugin: e,
+		fieldOptions: void 0
+	};
+	let { plugin: t, ...n } = e;
+	return {
+		plugin: t,
+		fieldOptions: Object.keys(n).length > 0 ? n : void 0
+	};
+}
+function G(e, t) {
 	if (t) {
 		if (typeof t == "string") {
 			let n = O(t);
@@ -1247,10 +1265,10 @@ function U(e, t) {
 		e.attachPlugin(t);
 	}
 }
-var W = "input, select, textarea";
-function G(e) {
+var K = "input, select, textarea";
+function q(e) {
 	if (e.hasAttribute("data-form-field")) return e;
-	if (e.matches(W)) {
+	if (e.matches(K)) {
 		let t = e.closest("[data-form-field]");
 		if (t) return t;
 	}
@@ -1258,13 +1276,13 @@ function G(e) {
 }
 //#endregion
 //#region src/typo3/index.ts
-var K = !1;
-function q(e) {
-	if (K) return console.warn("[Typo3Forms] initTypo3Forms() called more than once — ignoring duplicate call"), {
+var J = !1;
+function Y(e) {
+	if (J) return console.warn("[Typo3Forms] initTypo3Forms() called more than once — ignoring duplicate call"), {
 		registry: M,
 		destroy() {}
 	};
-	K = !0, e?.disableDefaultValidators || y();
+	J = !0, e?.disableDefaultValidators || y();
 	for (let t of e?.additionalValidators ?? []) M.registerValidator(t);
 	E("combobox", () => import("./combobox-DljG2TLr.js")), E("datepicker", () => import("./datepicker-BGS6ff8f.js")), M.registerFormPlugin(() => Promise.resolve().then(() => R));
 	for (let [t, n] of Object.entries(e?.additionalFieldPlugins ?? {})) E(t, n);
@@ -1282,9 +1300,9 @@ function q(e) {
 		registry: M,
 		destroy() {
 			for (let [e] of M.getAll()) M.unregister(e);
-			n && M.off("form:registered", n), o && document.removeEventListener("DOMContentLoaded", o), K = !1;
+			n && M.off("form:registered", n), o && document.removeEventListener("DOMContentLoaded", o), J = !1;
 		}
 	};
 }
 //#endregion
-export { B as ClientVariantsPlugin, j as FormRegistry, V as createTypo3Submit, M as formRegistry, k as hasPlugin, H as initField, q as initTypo3Forms, y as registerDefaultValidators, E as registerPlugin, b as registerValidator, D as unregisterPlugin };
+export { B as ClientVariantsPlugin, j as FormRegistry, V as createTypo3Submit, M as formRegistry, k as hasPlugin, H as initField, Y as initTypo3Forms, y as registerDefaultValidators, E as registerPlugin, b as registerValidator, D as unregisterPlugin };
