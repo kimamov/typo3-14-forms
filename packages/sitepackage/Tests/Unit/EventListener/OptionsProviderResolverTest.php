@@ -6,13 +6,43 @@ namespace T13Forms\Sitepackage\Tests\Unit\EventListener;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use T13Forms\Sitepackage\EventListener\OptionsProviderResolver;
 use T13Forms\Sitepackage\Form\OptionsImport\ImportResult;
 use T13Forms\Sitepackage\Form\OptionsImport\OptionsImportService;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Form\Mvc\Persistence\Event\AfterFormDefinitionLoadedEvent;
 
 final class OptionsProviderResolverTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->simulateFrontendRequest();
+    }
+
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['TYPO3_REQUEST']);
+    }
+
+    private function simulateFrontendRequest(): void
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getAttribute')
+            ->with('applicationType')
+            ->willReturn(SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $GLOBALS['TYPO3_REQUEST'] = $request;
+    }
+
+    private function simulateBackendRequest(): void
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getAttribute')
+            ->with('applicationType')
+            ->willReturn(SystemEnvironmentBuilder::REQUESTTYPE_BE);
+        $GLOBALS['TYPO3_REQUEST'] = $request;
+    }
+
     private function createEvent(array $definition): AfterFormDefinitionLoadedEvent
     {
         return new AfterFormDefinitionLoadedEvent($definition, 'test.form.yaml', 'cache-key');
@@ -26,7 +56,7 @@ final class OptionsProviderResolverTest extends TestCase
     }
 
     #[Test]
-    public function resolvesOptionsFromProviderReference(): void
+    public function resolvesOptionsOnFrontendRequest(): void
     {
         $definition = [
             'renderables' => [
@@ -41,6 +71,7 @@ final class OptionsProviderResolverTest extends TestCase
                                     'valueColumn' => 'code',
                                     'labelColumn' => 'name',
                                 ],
+                                'options' => ['de' => 'Germany'],
                             ],
                         ],
                     ],
@@ -48,7 +79,7 @@ final class OptionsProviderResolverTest extends TestCase
             ],
         ];
 
-        $expected = ['de' => 'Germany', 'at' => 'Austria'];
+        $expected = ['de' => 'Germany', 'at' => 'Austria', 'ch' => 'Switzerland'];
         $resolver = new OptionsProviderResolver($this->createServiceMock($expected));
         $event = $this->createEvent($definition);
 
@@ -58,6 +89,44 @@ final class OptionsProviderResolverTest extends TestCase
         $element = $result['renderables'][0]['renderables'][0];
 
         self::assertSame($expected, $element['properties']['options']);
+    }
+
+    #[Test]
+    public function skipsResolutionOnBackendRequest(): void
+    {
+        $this->simulateBackendRequest();
+
+        $definition = [
+            'renderables' => [
+                [
+                    'type' => 'Page',
+                    'renderables' => [
+                        [
+                            'type' => 'SingleSelect',
+                            'properties' => [
+                                'optionsProvider' => [
+                                    'source' => '1:/options_providers/countries.csv',
+                                ],
+                                'options' => ['de' => 'Germany'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $service = $this->createMock(OptionsImportService::class);
+        $service->expects(self::never())->method('import');
+
+        $resolver = new OptionsProviderResolver($service);
+        $event = $this->createEvent($definition);
+
+        $resolver($event);
+
+        $result = $event->getFormDefinition();
+        $element = $result['renderables'][0]['renderables'][0];
+
+        self::assertSame(['de' => 'Germany'], $element['properties']['options']);
     }
 
     #[Test]

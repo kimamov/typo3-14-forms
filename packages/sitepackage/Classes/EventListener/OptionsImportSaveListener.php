@@ -9,8 +9,11 @@ use TYPO3\CMS\Form\Event\BeforeFormIsSavedEvent;
 
 /**
  * Ensures that when an element uses `properties.optionsProvider`,
- * the generated `properties.options` are NOT persisted in the YAML.
- * Only the lightweight provider reference is kept.
+ * the persisted YAML stays lean: only the provider reference plus a
+ * small stub of options (first 4) is kept. The stub satisfies the
+ * Form Editor's requirement that option elements always have at
+ * least one option. At render time the full list is resolved from
+ * the provider file.
  */
 #[AsEventListener('t13forms/options-provider-save-guard')]
 final class OptionsImportSaveListener
@@ -27,6 +30,8 @@ final class OptionsImportSaveListener
         'valueColumn',
         'labelColumn',
     ];
+
+    private const STUB_OPTION_COUNT = 4;
 
     public function __invoke(BeforeFormIsSavedEvent $event): void
     {
@@ -72,6 +77,9 @@ final class OptionsImportSaveListener
             array_flip(self::ALLOWED_PROVIDER_KEYS),
         );
 
-        unset($element['properties']['options']);
+        $options = $element['properties']['options'] ?? [];
+        if (is_array($options) && $options !== []) {
+            $element['properties']['options'] = array_slice($options, 0, self::STUB_OPTION_COUNT, true);
+        }
     }
 }

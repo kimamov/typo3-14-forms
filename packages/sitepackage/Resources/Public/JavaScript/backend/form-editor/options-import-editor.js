@@ -1,11 +1,14 @@
 /**
  * Form Editor inspector module for the "Options Provider" feature.
  *
- * Instead of importing options into the YAML, this saves only a lightweight
- * reference (file, columns) as `properties.optionsProvider`. The actual
- * options are resolved at render time by a PSR-14 event listener.
+ * Saves a lightweight reference (file, columns) as `properties.optionsProvider`
+ * plus a stub of the first N options in `properties.options` (required by the
+ * Form Editor). The full option set is resolved at render time on the frontend
+ * by a PSR-14 event listener.
  */
 import AjaxRequest from '@typo3/core/ajax/ajax-request.js';
+
+const STUB_COUNT = 4;
 
 let _formEditorApp = null;
 
@@ -93,18 +96,40 @@ function renderPreviewTable(previewEl, options) {
   previewEl.style.display = '';
 }
 
+function buildStub(allOptions) {
+  const stub = {};
+  let i = 0;
+  for (const [k, v] of Object.entries(allOptions)) {
+    if (i >= STUB_COUNT) break;
+    stub[k] = v;
+    i++;
+  }
+  return stub;
+}
+
+async function fetchOptions(file, valCol, lblCol) {
+  const response = await new AjaxRequest(TYPO3.settings.ajaxUrls.sitepackage_options_import)
+    .post({ file, valueColumn: valCol, labelColumn: lblCol });
+  const result = await response.resolve();
+  if (!result.success) {
+    throw new Error(result.error || 'Request failed.');
+  }
+  return result.options;
+}
+
 async function renderOptionsProviderEditor(editorConfiguration, editorHtml) {
   const formElement = getCurrentlySelectedFormElement();
 
   const fileSelect = editorHtml.querySelector('[data-identifier="optionsProviderFileSelect"]');
   const valueColInput = editorHtml.querySelector('[data-identifier="optionsProviderValueColumn"]');
   const labelColInput = editorHtml.querySelector('[data-identifier="optionsProviderLabelColumn"]');
+  const applyBtn = editorHtml.querySelector('[data-identifier="optionsProviderApplyBtn"]');
   const previewBtn = editorHtml.querySelector('[data-identifier="optionsProviderPreviewBtn"]');
   const clearBtn = editorHtml.querySelector('[data-identifier="optionsProviderClearBtn"]');
   const statusEl = editorHtml.querySelector('[data-identifier="optionsProviderStatus"]');
   const previewEl = editorHtml.querySelector('[data-identifier="optionsProviderPreview"]');
 
-  if (!fileSelect || !previewBtn || !statusEl) {
+  if (!fileSelect || !applyBtn || !statusEl) {
     return;
   }
 
@@ -124,36 +149,54 @@ async function renderOptionsProviderEditor(editorConfiguration, editorHtml) {
     clearBtn.style.display = '';
   }
 
-  function saveProvider() {
+  applyBtn.addEventListener('click', async () => {
     const file = fileSelect.value;
     if (!file) {
-      formElement.set('properties.optionsProvider', null);
-      clearBtn.style.display = 'none';
-      statusEl.textContent = 'Provider removed. Save the form to persist.';
-      statusEl.className = 'form-text mt-1 text-warning';
-      previewEl.style.display = 'none';
+      statusEl.textContent = 'Please select a file first.';
+      statusEl.className = 'form-text mt-1 text-danger';
       return;
     }
 
-    const provider = {
-      source: file,
-      valueColumn: valueColInput.value.trim() || 'value',
-      labelColumn: labelColInput.value.trim() || 'label',
-    };
+    applyBtn.disabled = true;
+    statusEl.textContent = 'Applying provider\u2026';
+    statusEl.className = 'form-text mt-1 text-muted';
 
-    formElement.set('properties.optionsProvider', provider);
-    clearBtn.style.display = '';
-    statusEl.textContent = 'Provider set: ' + file + '. Save the form to persist.';
-    statusEl.className = 'form-text mt-1 text-success';
-  }
+    const valCol = valueColInput.value.trim() || 'value';
+    const lblCol = labelColInput.value.trim() || 'label';
 
-  fileSelect.addEventListener('change', saveProvider);
-  valueColInput.addEventListener('change', saveProvider);
-  labelColInput.addEventListener('change', saveProvider);
+    try {
+      const allOptions = await fetchOptions(file, valCol, lblCol);
+      const stub = buildStub(allOptions);
+
+      formElement.set('properties.optionsProvider', {
+        source: file,
+        valueColumn: valCol,
+        labelColumn: lblCol,
+      });
+      formElement.set('properties.options', stub);
+
+      clearBtn.style.display = '';
+
+      const total = Object.keys(allOptions).length;
+      const stubCount = Object.keys(stub).length;
+      statusEl.textContent = 'Provider applied: ' + file + ' (' + total
+        + ' options, ' + stubCount + ' stored as stub). Save the form to persist.';
+      statusEl.className = 'form-text mt-1 text-success';
+    } catch (err) {
+      statusEl.textContent = err.message || 'Failed to apply provider.';
+      statusEl.className = 'form-text mt-1 text-danger';
+    } finally {
+      applyBtn.disabled = false;
+    }
+  });
 
   clearBtn.addEventListener('click', () => {
     fileSelect.value = '';
-    saveProvider();
+    formElement.set('properties.optionsProvider', null);
+    clearBtn.style.display = 'none';
+    previewEl.style.display = 'none';
+    statusEl.textContent = 'Provider removed. Save the form to persist.';
+    statusEl.className = 'form-text mt-1 text-warning';
   });
 
   previewBtn.addEventListener('click', async () => {
@@ -168,25 +211,15 @@ async function renderOptionsProviderEditor(editorConfiguration, editorHtml) {
     statusEl.textContent = 'Loading preview\u2026';
     statusEl.className = 'form-text mt-1 text-muted';
 
+    const valCol = valueColInput.value.trim() || 'value';
+    const lblCol = labelColInput.value.trim() || 'label';
+
     try {
-      const response = await new AjaxRequest(TYPO3.settings.ajaxUrls.sitepackage_options_import)
-        .post({
-          file: file,
-          valueColumn: valueColInput.value.trim() || 'value',
-          labelColumn: labelColInput.value.trim() || 'label',
-        });
-
-      const result = await response.resolve();
-
-      if (!result.success) {
-        throw new Error(result.error || 'Preview failed.');
-      }
-
-      const count = Object.keys(result.options).length;
+      const allOptions = await fetchOptions(file, valCol, lblCol);
+      const count = Object.keys(allOptions).length;
       statusEl.textContent = count + ' options found in ' + file;
       statusEl.className = 'form-text mt-1 text-success';
-
-      renderPreviewTable(previewEl, result.options);
+      renderPreviewTable(previewEl, allOptions);
     } catch (err) {
       statusEl.textContent = err.message || 'Preview failed.';
       statusEl.className = 'form-text mt-1 text-danger';

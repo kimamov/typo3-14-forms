@@ -50,7 +50,7 @@ final class OptionsImportSaveListenerTest extends TestCase
     }
 
     #[Test]
-    public function stripsOptionsWhenProviderIsSet(): void
+    public function truncatesOptionsToStubWhenProviderIsSet(): void
     {
         $form = $this->buildForm([
             [
@@ -61,7 +61,14 @@ final class OptionsImportSaveListenerTest extends TestCase
                         'valueColumn' => 'value',
                         'labelColumn' => 'label',
                     ],
-                    'options' => ['de' => 'Germany', 'at' => 'Austria'],
+                    'options' => [
+                        'de' => 'Germany',
+                        'at' => 'Austria',
+                        'ch' => 'Switzerland',
+                        'fr' => 'France',
+                        'it' => 'Italy',
+                        'es' => 'Spain',
+                    ],
                 ],
             ],
         ]);
@@ -70,7 +77,33 @@ final class OptionsImportSaveListenerTest extends TestCase
         $element = $result['renderables'][0]['renderables'][0];
 
         self::assertArrayHasKey('optionsProvider', $element['properties']);
-        self::assertArrayNotHasKey('options', $element['properties']);
+        self::assertArrayHasKey('options', $element['properties']);
+        self::assertCount(4, $element['properties']['options']);
+        self::assertSame(
+            ['de' => 'Germany', 'at' => 'Austria', 'ch' => 'Switzerland', 'fr' => 'France'],
+            $element['properties']['options'],
+        );
+    }
+
+    #[Test]
+    public function keepsAllOptionsIfFewerThanStubLimit(): void
+    {
+        $form = $this->buildForm([
+            [
+                'type' => 'SingleSelect',
+                'properties' => [
+                    'optionsProvider' => [
+                        'source' => '1:/options_providers/small.csv',
+                    ],
+                    'options' => ['a' => 'A', 'b' => 'B'],
+                ],
+            ],
+        ]);
+
+        $result = $this->invokeListener($form);
+        $element = $result['renderables'][0]['renderables'][0];
+
+        self::assertCount(2, $element['properties']['options']);
     }
 
     #[Test]

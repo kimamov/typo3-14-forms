@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace T13Forms\Sitepackage\EventListener;
 
+use Psr\Http\Message\ServerRequestInterface;
 use T13Forms\Sitepackage\Form\OptionsImport\OptionsImportService;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Form\Mvc\Persistence\Event\AfterFormDefinitionLoadedEvent;
 
 /**
  * Resolves `properties.optionsProvider` references into actual
- * `properties.options` every time a form definition is loaded.
+ * `properties.options` on **frontend** requests only.
  *
- * This keeps the YAML lean (only the file reference is stored) while
- * the rendered form always gets the current file content.
+ * This keeps the YAML lean (only the file reference + a small stub is
+ * stored) while the rendered form always gets the current file content.
+ *
+ * In the backend / Form Editor the stub options from the YAML are used
+ * as-is so they don't get inflated to the full list on save.
  */
 #[AsEventListener('t13forms/options-provider-resolver')]
 final class OptionsProviderResolver
@@ -31,6 +36,10 @@ final class OptionsProviderResolver
 
     public function __invoke(AfterFormDefinitionLoadedEvent $event): void
     {
+        if (!$this->isFrontendRequest()) {
+            return;
+        }
+
         $definition = $event->getFormDefinition();
 
         if (!isset($definition['renderables']) || !is_array($definition['renderables'])) {
@@ -39,6 +48,20 @@ final class OptionsProviderResolver
 
         $definition['renderables'] = $this->processRenderables($definition['renderables']);
         $event->setFormDefinition($definition);
+    }
+
+    private function isFrontendRequest(): bool
+    {
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if (!$request instanceof ServerRequestInterface) {
+            return false;
+        }
+
+        try {
+            return ApplicationType::fromRequest($request)->isFrontend();
+        } catch (\RuntimeException) {
+            return false;
+        }
     }
 
     private function processRenderables(array $renderables): array

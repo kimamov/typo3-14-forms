@@ -5,9 +5,10 @@
             <span data-template-property="label"></span>
         </label>
         <div class="form-description">
-            Select a CSV or JSON file from the <code>options_providers</code> directory.
+            Select a CSV or JSON file from the <code>options_providers</code> directory,
+            then click <strong>Apply provider</strong>.
             Options are resolved from this file each time the form is rendered &ndash;
-            they are <strong>not</strong> stored in the form definition.
+            only a small stub is stored in the form definition.
         </div>
         <div class="mb-2">
             <select class="form-select form-select-sm"
@@ -31,7 +32,11 @@
                        value="label" />
             </div>
         </div>
-        <button type="button" class="btn btn-default btn-sm"
+        <button type="button" class="btn btn-primary btn-sm"
+                data-identifier="optionsProviderApplyBtn">
+            Apply provider
+        </button>
+        <button type="button" class="btn btn-default btn-sm ms-1"
                 data-identifier="optionsProviderPreviewBtn">
             Preview options
         </button>
