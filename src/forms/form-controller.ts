@@ -15,9 +15,14 @@ import { FieldController } from './field-controller';
 import { EventBus } from './events';
 import { getPluginFactory } from './plugins/index';
 
+export interface FormControllerOptions {
+  fieldSelector?: string;
+}
+
 export class FormController implements FormControllerApi, FormPluginHost {
   readonly id: string;
   private readonly formEl: HTMLFormElement;
+  private readonly fieldSelector: string;
   private readonly fields = new Map<string, FieldController>();
   private readonly formPlugins: FormPlugin[] = [];
   private readonly eventBus = new EventBus();
@@ -28,10 +33,11 @@ export class FormController implements FormControllerApi, FormPluginHost {
   private _isSubmitting = false;
   private _allowSubmit = false;
 
-  constructor(formEl: HTMLFormElement, submitFn: FormSubmitFunction) {
+  constructor(formEl: HTMLFormElement, submitFn: FormSubmitFunction, options?: FormControllerOptions) {
     this.formEl = formEl;
     this.id = formEl.id;
     this.submitFn = submitFn;
+    this.fieldSelector = options?.fieldSelector ?? SELECTORS.formField;
 
     this.formEl.setAttribute('novalidate', '');
 
@@ -128,7 +134,7 @@ export class FormController implements FormControllerApi, FormPluginHost {
   }
 
   private discoverFields(): void {
-    const wrappers = this.formEl.querySelectorAll<HTMLElement>(SELECTORS.formField);
+    const wrappers = this.formEl.querySelectorAll<HTMLElement>(this.fieldSelector);
     wrappers.forEach((wrapper) => this.initField(wrapper));
   }
 
@@ -201,22 +207,23 @@ export class FormController implements FormControllerApi, FormPluginHost {
   }
 
   private createObserver(): MutationObserver {
+    const selector = this.fieldSelector;
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         const added = Array.from(mutation.addedNodes);
         for (const node of added) {
           if (!(node instanceof HTMLElement)) continue;
-          const targets = node.matches(SELECTORS.formField)
+          const targets = node.matches(selector)
             ? [node]
-            : Array.from(node.querySelectorAll<HTMLElement>(SELECTORS.formField));
+            : Array.from(node.querySelectorAll<HTMLElement>(selector));
           targets.forEach((el) => this.initField(el));
         }
         const removed = Array.from(mutation.removedNodes);
         for (const node of removed) {
           if (!(node instanceof HTMLElement)) continue;
-          const targets = node.matches(SELECTORS.formField)
+          const targets = node.matches(selector)
             ? [node]
-            : Array.from(node.querySelectorAll<HTMLElement>(SELECTORS.formField));
+            : Array.from(node.querySelectorAll<HTMLElement>(selector));
           targets.forEach((el) => this.destroyField(el));
         }
       }

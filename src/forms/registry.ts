@@ -1,5 +1,6 @@
 import type { FormControllerApi, RegistryEventType, RegistryEventHandler, FieldPluginFactory, FormPluginFactory, FormSubmitFunction } from './types';
 import { FormController } from './form-controller';
+import type { FormControllerOptions } from './form-controller';
 import { EventBus } from './events';
 import { registerValidator } from './validators/index';
 import { registerPlugin } from './plugins/index';
@@ -10,17 +11,17 @@ export class FormRegistry {
   private readonly formPluginFactories: FormPluginFactory[] = [];
   private readonly eventBus = new EventBus();
 
-  init(submitFn: FormSubmitFunction, root: ParentNode = document): void {
-    const formElements = root.querySelectorAll<HTMLFormElement>('form[id]');
-    formElements.forEach((formEl) => this.register(formEl, submitFn));
+  init(submitFn: FormSubmitFunction, root: ParentNode = document, formSelector = 'form[id]', controllerOptions?: FormControllerOptions): void {
+    const formElements = root.querySelectorAll<HTMLFormElement>(formSelector);
+    formElements.forEach((formEl) => this.register(formEl, submitFn, controllerOptions));
   }
 
-  register(formEl: HTMLFormElement, submitFn: FormSubmitFunction): FormControllerApi {
+  register(formEl: HTMLFormElement, submitFn: FormSubmitFunction, controllerOptions?: FormControllerOptions): FormControllerApi {
     if (this.forms.has(formEl.id)) {
       return this.forms.get(formEl.id)!;
     }
 
-    const controller = new FormController(formEl, submitFn);
+    const controller = new FormController(formEl, submitFn, controllerOptions);
     this.forms.set(formEl.id, controller);
     this.loadFormPlugins(controller);
     this.eventBus.emit('form:registered', { formId: formEl.id });
