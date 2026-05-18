@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events Demo</title>
+  <link rel="stylesheet" href="../formz/formz.css" />
+  <link rel="stylesheet" href="./demo-base.css" />
+</head>
+<body>
+  <div class="demo-section">
+    <h3>Character Counter</h3>
+    <form id="post-form">
+      <div data-form-field="body"
+           data-validate='[{"type":"StringLength","options":{"maximum":280,"message":"Max 280 characters"}}]'>
+        <label for="body">Post</label>
+        <textarea id="body" name="body" placeholder="What's on your mind?"></textarea>
+        <div id="body-errors" class="invalid-feedback"></div>
+        <span id="char-count" style="font-size: 0.8125rem; color: var(--text);">0 / 280</span>
+      </div>
+      <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+  </div>
+
+  <div class="demo-section">
+    <h3>Dependent Field Visibility</h3>
+    <form id="survey">
+      <div data-form-field="hasPet" data-validate='[{"type":"NotEmpty","options":{"message":"Please select an option"}}]'>
+        <label for="hasPet">Do you have a pet?</label>
+        <select id="hasPet" name="hasPet">
+          <option value="">Select...</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <div id="hasPet-errors" class="invalid-feedback"></div>
+      </div>
+
+      <div data-form-field="petName" id="pet-name-field" hidden
+           data-validate='[{"type":"NotEmpty","options":{"message":"What is your pet&apos;s name?"}}]'>
+        <label for="petName">Pet Name</label>
+        <input id="petName" name="petName" />
+        <div id="petName-errors" class="invalid-feedback"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+  <div>
+    <h3>Event Log</h3>
+    <div id="event-log" class="demo-log"></div>
+  </div>
+
+  <script type="module">
+    import { formRegistry, registerDefaultValidators } from '../formz/formz.js';
+
+    registerDefaultValidators();
+
+    formRegistry.init(async (ctx) => {
+      ctx.finish('<p style="color: var(--form-success); font-weight: 500;">Submitted!</p>');
+    });
+
+    const log = document.getElementById('event-log');
+    function addLog(msg) {
+      const line = document.createElement('div');
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      log.prepend(line);
+      if (log.children.length > 30) log.lastChild.remove();
+    }
+
+    // Character counter
+    const postForm = formRegistry.get('post-form');
+    postForm.on('field:change', (detail) => {
+      if (detail.fieldName === 'body') {
+        const count = detail.state.value.length;
+        document.getElementById('char-count').textContent = `${count} / 280`;
+        addLog(`field:change → body (${count} chars)`);
+      }
+    });
+
+    // Dependent field visibility
+    const survey = formRegistry.get('survey');
+    survey.on('field:change', (detail) => {
+      if (detail.fieldName === 'hasPet') {
+        const showPet = detail.state.value === 'yes';
+        document.getElementById('pet-name-field').hidden = !showPet;
+        addLog(`field:change → hasPet = "${detail.state.value}" → petName ${showPet ? 'shown' : 'hidden'}`);
+      }
+    });
+
+    // Log all form events
+    ['form:submit', 'form:valid', 'form:invalid', 'form:reset'].forEach((evt) => {
+      postForm.on(evt, (detail) => addLog(`${evt} → post-form`));
+      survey.on(evt, (detail) => addLog(`${evt} → survey`));
+    });
+  </script>
+</body>
+</html>

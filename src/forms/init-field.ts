@@ -1,5 +1,6 @@
 import type { FieldPlugin } from './types';
 import { FieldController } from './field-controller';
+import type { FieldControllerOptions } from './field-controller';
 import { getPluginFactory } from './plugins/index';
 
 type PluginArg =
@@ -22,9 +23,10 @@ type PluginArg =
 export function initField(
   element: HTMLElement,
   plugin?: PluginArg,
+  options?: FieldControllerOptions,
 ): FieldController {
   const wrapper = resolveWrapper(element);
-  const ctrl = new FieldController(wrapper);
+  const ctrl = new FieldController(wrapper, options);
   attachPlugin(ctrl, plugin ?? ctrl.fieldType);
   return ctrl;
 }

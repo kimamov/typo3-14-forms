@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standalone Field Demo</title>
+  <link rel="stylesheet" href="../formz/formz.css" />
+  <link rel="stylesheet" href="./demo-base.css" />
+</head>
+<body>
+  <div class="demo-section">
+    <h3>Standalone Search Field</h3>
+    <div data-form-field="search"
+         data-validate='[{"type":"StringLength","options":{"minimum":2,"message":"Enter at least 2 characters"}}]'>
+      <label for="search">Search</label>
+      <input id="search" type="text" placeholder="Type to search..." />
+      <div id="search-errors" class="invalid-feedback"></div>
+    </div>
+    <div id="search-status" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text);"></div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Programmatic Control</h3>
+    <div data-form-field="controlled"
+         data-validate='[{"type":"NotEmpty","options":{"message":"This field cannot be empty"}}]'>
+      <label for="controlled">Controlled Field</label>
+      <input id="controlled" type="text" />
+      <div id="controlled-errors" class="invalid-feedback"></div>
+    </div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+      <button id="btn-set" class="btn btn-outline-primary">Set "hello"</button>
+      <button id="btn-validate" class="btn btn-outline-primary">Validate</button>
+      <button id="btn-reset" class="btn btn-outline-primary">Reset</button>
+    </div>
+    <div id="controlled-state" class="demo-log" style="margin-top: 0.75rem;"></div>
+  </div>
+
+  <script type="module">
+    import { initField, registerDefaultValidators } from '../formz/formz.js';
+
+    registerDefaultValidators();
+
+    // Standalone search field
+    const searchCtrl = initField(document.querySelector('[data-form-field="search"]'));
+    const searchStatus = document.getElementById('search-status');
+
+    searchCtrl.on('valid', (state) => {
+      if (state.value) {
+        searchStatus.textContent = `Searching for "${state.value}"...`;
+        searchStatus.style.color = 'var(--form-success)';
+      } else {
+        searchStatus.textContent = '';
+      }
+    });
+
+    searchCtrl.on('invalid', (state) => {
+      searchStatus.textContent = '';
+    });
+
+    // Programmatic control
+    const ctrl = initField(document.querySelector('[data-form-field="controlled"]'));
+    const stateDisplay = document.getElementById('controlled-state');
+
+    function showState() {
+      const s = ctrl.state;
+      stateDisplay.textContent = JSON.stringify(s, null, 2);
+    }
+
+    ctrl.on('change', showState);
+    showState();
+
+    document.getElementById('btn-set').addEventListener('click', () => {
+      ctrl.setValue('hello');
+    });
+
+    document.getElementById('btn-validate').addEventListener('click', () => {
+      ctrl.validate();
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      ctrl.reset();
+    });
+  </script>
+</body>
+</html>

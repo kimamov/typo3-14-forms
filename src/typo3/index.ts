@@ -3,10 +3,19 @@ import { registerPlugin } from '../forms/plugins/index';
 import { registerDefaultValidators } from '../forms/validators';
 import { createTypo3Submit } from './submit';
 import type { Typo3FormsOptions, Typo3FormsApi } from './types';
+import type { RegistryEventHandler } from '../forms/types';
 
 export type { Typo3FormsOptions, Typo3FormsHooks, Typo3AjaxFormResponse, Typo3FormsApi } from './types';
 
+let initialized = false;
+
 export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
+  if (initialized) {
+    console.warn('[Typo3Forms] initTypo3Forms() called more than once — ignoring duplicate call');
+    return { registry: formRegistry, destroy() {} };
+  }
+  initialized = true;
+
   if (!options?.disableDefaultValidators) {
     registerDefaultValidators();
   }
@@ -29,12 +38,14 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
 
   const submitFn = options?.onSubmit ?? createTypo3Submit(options?.hooks);
 
+  let registeredHandler: RegistryEventHandler | null = null;
   if (options?.hooks?.onFormRegistered) {
     const hook = options.hooks.onFormRegistered;
-    formRegistry.on('form:registered', ({ formId }) => {
+    registeredHandler = ({ formId }) => {
       const api = formRegistry.get(formId);
       if (api) hook(api);
-    });
+    };
+    formRegistry.on('form:registered', registeredHandler);
   }
 
   const formSelector = options?.formSelector;
@@ -42,8 +53,10 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
 
   const init = () => formRegistry.init(submitFn, document, formSelector, controllerOptions);
 
+  let domListener: (() => void) | null = null;
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    domListener = init;
+    document.addEventListener('DOMContentLoaded', domListener);
   } else {
     init();
   }
@@ -54,6 +67,13 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
       for (const [formId] of formRegistry.getAll()) {
         formRegistry.unregister(formId);
       }
+      if (registeredHandler) {
+        formRegistry.off('form:registered', registeredHandler);
+      }
+      if (domListener) {
+        document.removeEventListener('DOMContentLoaded', domListener);
+      }
+      initialized = false;
     },
   };
 }

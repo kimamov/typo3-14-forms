@@ -20,6 +20,14 @@ export class EventBus {
     set.add(handler);
   }
 
+  once(event: AnyEventType, handler: AnyHandler): void {
+    const wrapper = ((...args: unknown[]) => {
+      this.off(event, wrapper as AnyHandler);
+      (handler as (...a: unknown[]) => void)(...args);
+    }) as AnyHandler;
+    this.on(event, wrapper);
+  }
+
   off(event: AnyEventType, handler: AnyHandler): void {
     this.listeners.get(event)?.delete(handler);
   }
@@ -27,11 +35,11 @@ export class EventBus {
   emit(event: AnyEventType, detail: unknown): void {
     const set = this.listeners.get(event);
     if (!set) return;
-    for (const handler of set) {
+    for (const handler of [...set]) {
       try {
         (handler as (detail: unknown) => void)(detail);
       } catch (err) {
-        console.error(`[TYPO3Forms] Error in "${event}" handler:`, err);
+        console.error(`[FormsModule] Error in "${event}" handler:`, err);
       }
     }
   }

@@ -1,4 +1,4 @@
-import type { FieldState, ValidatorRule, FieldPlugin, FieldPluginHost } from './types';
+import type { FieldState, ValidatorRule, FieldPlugin, FieldPluginHost, FieldControllerEventType, FieldControllerEventHandler } from './types';
 import { CSS_CLASSES, SELECTORS, DEBOUNCE_MS } from './types';
 import { runValidators } from './validators/index';
 
@@ -7,9 +7,9 @@ const NATIVE_CONSTRAINT_ATTRS = [
 ] as const;
 
 export interface FieldControllerOptions {
-  validate?: (value: string, rules: ValidatorRule[], defaultValidate: () => ValidatorResult) => ValidatorResult;
-  onServerErrors?: (errors: string[], fieldName: string) => string[];  // transform/filter errors
-  renderErrors?: (errors: string[], ctx: FieldController) => void
+  validate?: (value: string, rules: ValidatorRule[], defaultValidate: () => FieldValidationResult) => FieldValidationResult;
+  onServerErrors?: (errors: string[], fieldName: string) => string[];
+  renderErrors?: (errors: string[], ctx: FieldController) => void;
 }
 
 export class FieldController implements FieldPluginHost {
@@ -28,8 +28,10 @@ export class FieldController implements FieldPluginHost {
   private plugin: FieldPlugin | null = null;
   private _serverErrors: string[] = [];
   private _serverErrorValue: string | null = null;
+  private _destroyed = false;
+  private readonly fieldListeners = new Map<FieldControllerEventType, Set<FieldControllerEventHandler>>();
 
-  private options: FieldControllerOptions={};
+  private options: FieldControllerOptions = {};
 
   constructor(wrapper: HTMLElement, options: FieldControllerOptions={}) {
     this.wrapper = wrapper;
@@ -106,6 +108,40 @@ export class FieldController implements FieldPluginHost {
     this.onChange = cb;
   }
 
+  on(event: FieldControllerEventType, handler: FieldControllerEventHandler): void {
+    let set = this.fieldListeners.get(event);
+    if (!set) {
+      set = new Set();
+      this.fieldListeners.set(event, set);
+    }
+    set.add(handler);
+  }
+
+  once(event: FieldControllerEventType, handler: FieldControllerEventHandler): void {
+    const wrapper: FieldControllerEventHandler = (state) => {
+      this.off(event, wrapper);
+      handler(state);
+    };
+    this.on(event, wrapper);
+  }
+
+  off(event: FieldControllerEventType, handler: FieldControllerEventHandler): void {
+    this.fieldListeners.get(event)?.delete(handler);
+  }
+
+  private emitFieldEvent(event: FieldControllerEventType): void {
+    const set = this.fieldListeners.get(event);
+    if (!set) return;
+    const state = this.state;
+    for (const handler of [...set]) {
+      try {
+        handler(state);
+      } catch (err) {
+        console.error(`[FormsModule] Error in field "${this.name}" "${event}" handler:`, err);
+      }
+    }
+  }
+
   setValue(value: string): void {
     if (this.input instanceof HTMLInputElement || this.input instanceof HTMLTextAreaElement) {
       this.input.value = value;
@@ -120,6 +156,10 @@ export class FieldController implements FieldPluginHost {
   }
 
   async attachPlugin(plugin: FieldPlugin): Promise<void> {
+    if (this._destroyed) return;
+    if (this.plugin) {
+      this.plugin.destroy();
+    }
     this.plugin = plugin;
     await plugin.init(this.wrapper, this);
   }
@@ -129,7 +169,7 @@ export class FieldController implements FieldPluginHost {
     this.input = newInput;
   }
 
-  validate(): ValidatorResult {
+  validate(): FieldValidationResult {
     if (!this._enabled) {
       return { isValid: true, errors: [] };
     }
@@ -142,45 +182,70 @@ export class FieldController implements FieldPluginHost {
     this._serverErrors = [];
     this._serverErrorValue = null;
 
-    const extraOptions: Record<string, unknown> = {};
+    const defaultValidate = (): FieldValidationResult => {
+      const extraOptions: Record<string, unknown> = {};
+      if (this.input instanceof HTMLInputElement && this.input.type === 'file') {
+        extraOptions['__files'] = this.input.files;
+      }
+      const failures = runValidators(this.rules, value, extraOptions);
+      const errors = failures.map((f) => f.message);
+      return { isValid: errors.length === 0, errors };
+    };
 
-    if (this.input instanceof HTMLInputElement && this.input.type === 'file') {
-      extraOptions['__files'] = this.input.files;
-    }
-
-    const failures = runValidators(this.rules, value, extraOptions);
-    const errors = failures.map((f) => f.message);
-    const isValid = errors.length === 0;
+    const result = this.options.validate
+      ? this.options.validate(value, this.rules, defaultValidate)
+      : defaultValidate();
 
     this._state = {
       ...this._state,
       value,
-      isValid,
-      errors,
+      isValid: result.isValid,
+      errors: result.errors,
     };
 
-    this.updateDOM(isValid, errors);
-    return { isValid, errors };
+    this.updateDOM(result.isValid, result.errors);
+    return result;
   }
 
   setServerErrors(errors: string[]): void {
-    const isValid = errors.length === 0;
-    this._serverErrors = errors;
+    const transformed = this.options.onServerErrors
+      ? this.options.onServerErrors(errors, this.name)
+      : errors;
+    const isValid = transformed.length === 0;
+    this._serverErrors = transformed;
     this._serverErrorValue = !isValid ? this.readValue() : null;
     this._state = {
       ...this._state,
       isValid,
       isTouched: true,
-      errors,
+      errors: transformed,
     };
-    this.updateDOM(isValid, errors);
+    this.updateDOM(isValid, transformed);
     this.notifyChange();
   }
 
   reset(): void {
+    if (this.input instanceof HTMLInputElement) {
+      if (this.input.type === 'checkbox' || this.input.type === 'radio') {
+        this.input.checked = this.input.defaultChecked;
+      } else if (this.input.type === 'file') {
+        this.input.value = '';
+      } else {
+        this.input.value = this.input.defaultValue;
+      }
+    } else if (this.input instanceof HTMLSelectElement) {
+      for (const opt of Array.from(this.input.options)) {
+        opt.selected = opt.defaultSelected;
+      }
+    } else if (this.input instanceof HTMLTextAreaElement) {
+      this.input.value = this.input.defaultValue;
+    }
+
+    this._serverErrors = [];
+    this._serverErrorValue = null;
     this._state = {
       name: this.name,
-      value: '',
+      value: this.readValue(),
       isValid: true,
       isDirty: false,
       isTouched: false,
@@ -190,12 +255,14 @@ export class FieldController implements FieldPluginHost {
   }
 
   destroy(): void {
+    this._destroyed = true;
     this.plugin?.destroy();
     this.plugin = null;
     this.abortController.abort();
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.restoreNativeValidation();
     this.onChange = null;
+    this.fieldListeners.clear();
   }
 
   private disableNativeValidation(): void {
@@ -260,6 +327,8 @@ export class FieldController implements FieldPluginHost {
 
   private notifyChange(): void {
     this._state.value = this.readValue();
+    this.emitFieldEvent('change');
+    this.emitFieldEvent(this._state.isValid ? 'valid' : 'invalid');
     this.onChange?.(this.state);
   }
 
@@ -271,8 +340,8 @@ export class FieldController implements FieldPluginHost {
     }
 
     if (this.input instanceof HTMLInputElement) {
-      if (this.input.type === 'checkbox') {
-        return this.input.checked ? this.input.value : '';
+      if (this.input.type === 'checkbox' || this.input.type === 'radio') {
+        return this.readGroupValue();
       }
       if (this.input.type === 'file') {
         return this.input.files?.length ? this.input.value : '';
@@ -282,13 +351,11 @@ export class FieldController implements FieldPluginHost {
     return this.input.value;
   }
 
-  /**
-   * For radio buttons and multi-checkboxes, read the checked value(s)
-   * from all inputs sharing the same name within the wrapper.
-   */
-  readGroupValue(): string {
+  private readGroupValue(): string {
     const inputs = this.wrapper.querySelectorAll<HTMLInputElement>('input[type="radio"], input[type="checkbox"]');
-    if (inputs.length <= 1) return this.readValue();
+    if (inputs.length <= 1) {
+      return (this.input as HTMLInputElement).checked ? (this.input as HTMLInputElement).value : '';
+    }
 
     const values: string[] = [];
     inputs.forEach((input) => {
@@ -313,16 +380,6 @@ export class FieldController implements FieldPluginHost {
     return this.wrapper.querySelector(`.${CSS_CLASSES.errorMsgClass}`);
   }
 
-  protected renderErrors(errors: string[]){
-    if(this.options.renderErrors){
-      this.options.renderErrors(errors, this);
-    } else if (this.errorsEl) {
-      this.errorsEl.innerHTML = errors
-        .map((msg) => this.escapeHtml(msg))
-        .join('<br/>');
-    }
-  }
-
   private updateDOM(isValid: boolean, errors: string[]): void {
     if (isValid) {
       this.input.classList.remove(CSS_CLASSES.errorClass);
@@ -336,7 +393,9 @@ export class FieldController implements FieldPluginHost {
       this.addErrorsToDescribedBy();
     }
 
-    if (this.errorsEl) {
+    if (this.options.renderErrors) {
+      this.options.renderErrors(errors, this);
+    } else if (this.errorsEl) {
       this.errorsEl.innerHTML = errors
         .map((msg) => this.escapeHtml(msg))
         .join('<br/>');
@@ -387,7 +446,7 @@ export class FieldController implements FieldPluginHost {
   }
 }
 
-interface ValidatorResult {
+export interface FieldValidationResult {
   isValid: boolean;
   errors: string[];
 }

@@ -3,15 +3,17 @@ import { FormController } from './form-controller';
 import type { FormControllerOptions } from './form-controller';
 import { EventBus } from './events';
 import { registerValidator } from './validators/index';
-import { registerPlugin } from './plugins/index';
+import { registerPlugin, unregisterPlugin, hasPlugin } from './plugins/index';
 import type { Validator } from './types';
 
 export class FormRegistry {
   private readonly forms = new Map<string, FormController>();
   private readonly formPluginFactories: FormPluginFactory[] = [];
   private readonly eventBus = new EventBus();
+  private _initialized = false;
 
   init(submitFn: FormSubmitFunction, root: ParentNode = document, formSelector = 'form[id]', controllerOptions?: FormControllerOptions): void {
+    this._initialized = true;
     const formElements = root.querySelectorAll<HTMLFormElement>(formSelector);
     formElements.forEach((formEl) => this.register(formEl, submitFn, controllerOptions));
   }
@@ -74,16 +76,29 @@ export class FormRegistry {
     registerPlugin(type, factory);
   }
 
+  unregisterPlugin(type: string): boolean {
+    return unregisterPlugin(type);
+  }
+
+  hasPlugin(type: string): boolean {
+    return hasPlugin(type);
+  }
+
   registerFormPlugin(factory: FormPluginFactory): void {
+    if (this._initialized) {
+      console.warn('[FormsModule] registerFormPlugin called after init — new plugin will only apply to forms registered after this point');
+    }
     this.formPluginFactories.push(factory);
   }
 }
 
 declare global {
   interface Window {
-    __FormsModule: FormRegistry;
+    __FormsModule?: FormRegistry;
   }
 }
 
 export const formRegistry = new FormRegistry();
-window.__FormsModule = formRegistry;
+if (typeof window !== 'undefined') {
+  window.__FormsModule = formRegistry;
+}

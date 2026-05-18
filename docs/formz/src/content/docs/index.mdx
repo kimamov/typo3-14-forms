@@ -1,0 +1,69 @@
+---
+title: Formz
+description: A lightweight, framework-free form library that progressively enhances server-rendered forms.
+template: splash
+hero:
+  tagline: Progressive enhancement for server-rendered forms. No React. No Vue. Just HTML and TypeScript.
+  actions:
+    - text: Get Started
+      link: /guides/introduction/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/withastro/starlight
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why Formz?
+
+<CardGrid>
+  <Card title="Progressive Enhancement" icon="rocket">
+    Works with any server-rendered HTML form. Your forms work without JavaScript — Formz adds validation, plugins, and AJAX submit on top.
+  </Card>
+  <Card title="Framework-Free" icon="puzzle">
+    No React, Vue, or Angular dependency. Pure TypeScript that enhances standard `<form>` elements with `data-*` attributes.
+  </Card>
+  <Card title="Declarative Validation" icon="approve-check">
+    Define validation rules in HTML via `data-validate` JSON. 12 built-in validators, async validator support, and easy custom validators.
+  </Card>
+  <Card title="TYPO3 Ready" icon="setting">
+    First-class TYPO3 EXT:form integration with AJAX submit, multistep forms, client-side variants, and lifecycle hooks.
+  </Card>
+</CardGrid>
+
+## Quick Example
+
+```html
+<form id="contact">
+  <div data-form-field="name" data-validate='[{"type":"NotEmpty","options":{"message":"Name is required"}}]'>
+    <label for="name">Name</label>
+    <input id="name" type="text" />
+    <div id="name-errors" class="invalid-feedback"></div>
+  </div>
+
+  <div data-form-field="email" data-validate='[{"type":"NotEmpty"},{"type":"EmailAddress","options":{"message":"Enter a valid email"}}]'>
+    <label for="email">Email</label>
+    <input id="email" type="email" />
+    <div id="email-errors" class="invalid-feedback"></div>
+  </div>
+
+  <button type="submit">Send</button>
+</form>
+```
+
+```typescript
+import { formRegistry } from 'formz';
+import { registerDefaultValidators } from 'formz';
+
+registerDefaultValidators();
+formRegistry.init(async (ctx) => {
+  // Your submit logic here
+  const response = await fetch(ctx.formEl.action, {
+    method: 'POST',
+    body: ctx.formData,
+  });
+  ctx.finish('Thank you!');
+});
+```

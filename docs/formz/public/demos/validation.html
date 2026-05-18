@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validation Demo</title>
+  <link rel="stylesheet" href="../formz/formz.css" />
+  <link rel="stylesheet" href="./demo-base.css" />
+</head>
+<body>
+  <form id="validation-demo" action="#" method="post">
+    <div class="demo-section">
+      <h3>NotEmpty + EmailAddress</h3>
+      <div data-form-field="email"
+           data-validate='[
+             {"type":"NotEmpty","options":{"message":"Email is required"}},
+             {"type":"EmailAddress","options":{"message":"Please enter a valid email"}}
+           ]'>
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" placeholder="user@example.com" />
+        <div id="email-errors" class="invalid-feedback"></div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>StringLength</h3>
+      <div data-form-field="bio"
+           data-validate='[
+             {"type":"NotEmpty","options":{"message":"Bio is required"}},
+             {"type":"StringLength","options":{"minimum":10,"maximum":100,"message":"Must be 10–100 characters"}}
+           ]'>
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" placeholder="Tell us about yourself (10–100 chars)"></textarea>
+        <div id="bio-errors" class="invalid-feedback"></div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>Integer + NumberRange</h3>
+      <div data-form-field="age"
+           data-validate='[
+             {"type":"NotEmpty","options":{"message":"Age is required"}},
+             {"type":"Integer","options":{"message":"Must be a whole number"}},
+             {"type":"NumberRange","options":{"minimum":18,"maximum":120,"message":"Must be between 18 and 120"}}
+           ]'>
+        <label for="age">Age</label>
+        <input id="age" type="text" name="age" placeholder="18–120" />
+        <div id="age-errors" class="invalid-feedback"></div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>RegularExpression</h3>
+      <div data-form-field="code"
+           data-validate='[
+             {"type":"NotEmpty","options":{"message":"Code is required"}},
+             {"type":"RegularExpression","options":{"regularExpression":"/^[A-Z]{3}-\\d{4}$/","message":"Format: ABC-1234"}}
+           ]'>
+        <label for="code">Product Code</label>
+        <input id="code" type="text" name="code" placeholder="ABC-1234" />
+        <div id="code-errors" class="invalid-feedback"></div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>Alphanumeric</h3>
+      <div data-form-field="username"
+           data-validate='[
+             {"type":"NotEmpty","options":{"message":"Username is required"}},
+             {"type":"Alphanumeric","options":{"message":"Letters and numbers only"}}
+           ]'>
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" placeholder="johndoe42" />
+        <div id="username-errors" class="invalid-feedback"></div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Validate All</button>
+  </form>
+
+  <script type="module">
+    import { formRegistry, registerDefaultValidators } from '../formz/formz.js';
+
+    registerDefaultValidators();
+
+    formRegistry.init(async (ctx) => {
+      ctx.finish('<p style="color: var(--form-success); font-weight: 500;">All fields are valid!</p>');
+    });
+  </script>
+</body>
+</html>

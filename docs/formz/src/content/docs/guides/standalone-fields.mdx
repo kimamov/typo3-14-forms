@@ -1,0 +1,117 @@
+---
+title: Standalone Fields
+description: Use Formz fields outside of a form context with initField().
+---
+
+import FormPreview from '../../../components/FormPreview.astro';
+
+Not every validated input lives inside a `<form>`. The `initField()` function lets you enhance individual fields independently — useful for search bars, inline edits, or widget inputs.
+
+## Basic Usage
+
+```html
+<div data-form-field="search"
+     data-validate='[{"type":"StringLength","options":{"minimum":2,"message":"Enter at least 2 characters"}}]'>
+  <label for="search">Search</label>
+  <input id="search" type="text" />
+  <div id="search-errors" class="invalid-feedback"></div>
+</div>
+```
+
+```typescript
+import { initField, registerDefaultValidators } from 'formz';
+
+registerDefaultValidators();
+
+const ctrl = initField(document.getElementById('search')!);
+
+ctrl.on('valid', (state) => {
+  performSearch(state.value);
+});
+```
+
+<FormPreview src="/demos/standalone-field.html" height="460px" title="Standalone field demo" />
+
+## With a Plugin
+
+Attach a plugin by registry key, class, or instance:
+
+```typescript
+// By registry key (lazy-loaded)
+const comboCtrl = initField(mySelect, 'combobox');
+
+// By class (instant)
+import ComboboxPlugin from './plugins/combobox';
+const comboCtrl2 = initField(mySelect, ComboboxPlugin);
+
+// By instance (pre-configured)
+const plugin = new ComboboxPlugin();
+const comboCtrl3 = initField(mySelect, plugin);
+```
+
+## With Custom Options
+
+Pass `FieldControllerOptions` as the third argument:
+
+```typescript
+const ctrl = initField(myElement, undefined, {
+  validate(value, rules, defaultValidate) {
+    const result = defaultValidate();
+    if (result.isValid && value.includes('admin')) {
+      return { isValid: false, errors: ['Reserved word'] };
+    }
+    return result;
+  },
+
+  onServerErrors(errors, fieldName) {
+    return errors.map(e => `Server: ${e}`);
+  },
+
+  renderErrors(errors, fieldCtrl) {
+    const toast = document.getElementById('toast')!;
+    toast.textContent = errors.join('; ');
+    toast.hidden = errors.length === 0;
+  },
+});
+```
+
+## Programmatic Control
+
+`initField()` returns a `FieldController` with full control:
+
+```typescript
+const ctrl = initField(myInput);
+
+// Read state
+console.log(ctrl.state);
+// { name: "search", value: "", isValid: true, isDirty: false, isTouched: false, errors: [] }
+
+// Set value programmatically
+ctrl.setValue('hello');
+
+// Trigger validation
+const result = ctrl.validate();
+console.log(result.isValid, result.errors);
+
+// Listen for changes
+ctrl.on('change', (state) => {
+  console.log('New value:', state.value);
+});
+
+// Reset to initial state
+ctrl.reset();
+
+// Clean up
+ctrl.destroy();
+```
+
+## Accepting a Bare Input
+
+You can pass an `<input>` directly — `initField` resolves the closest `[data-form-field]` wrapper:
+
+```typescript
+const input = document.querySelector('#search input') as HTMLInputElement;
+const ctrl = initField(input);
+```
+
+If the input is not inside a `[data-form-field]` wrapper, `initField` throws an error.

@@ -6,6 +6,10 @@ export function registerPlugin(type: string, factory: FieldPluginFactory): void 
   registry.set(type, factory);
 }
 
+export function unregisterPlugin(type: string): boolean {
+  return registry.delete(type);
+}
+
 export function getPluginFactory(type: string): FieldPluginFactory | undefined {
   return registry.get(type);
 }

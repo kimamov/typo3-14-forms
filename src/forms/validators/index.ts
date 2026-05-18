@@ -57,6 +57,34 @@ export function runValidators(
 
     const options = { ...(rule.options ?? {}), ...(extraOptions ?? {}) };
     const result = validator.validate(value, options);
+    if (result instanceof Promise) {
+      console.warn(`[FormsModule] Async validator "${rule.type}" used in sync context — use runValidatorsAsync instead`);
+      continue;
+    }
+    if (!result.valid) {
+      results.push(result);
+    }
+  }
+
+  return results;
+}
+
+export async function runValidatorsAsync(
+  rules: ValidatorRule[],
+  value: string,
+  extraOptions?: Record<string, unknown>,
+): Promise<ValidatorResult[]> {
+  const results: ValidatorResult[] = [];
+
+  for (const rule of rules) {
+    const validator = registry.get(rule.type);
+    if (!validator) {
+      console.warn(`[FormsModule] Unknown validator type: "${rule.type}"`);
+      continue;
+    }
+
+    const options = { ...(rule.options ?? {}), ...(extraOptions ?? {}) };
+    const result = await validator.validate(value, options);
     if (!result.valid) {
       results.push(result);
     }

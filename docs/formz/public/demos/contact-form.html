@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Form Demo</title>
+  <link rel="stylesheet" href="../formz/formz.css" />
+  <link rel="stylesheet" href="./demo-base.css" />
+</head>
+<body>
+  <form id="contact" action="/api/contact" method="post">
+    <div data-form-field="name"
+         data-validate='[{"type":"NotEmpty","options":{"message":"Please enter your name"}}]'>
+      <label for="name">Name</label>
+      <input id="name" type="text" name="name" />
+      <div id="name-errors" class="invalid-feedback"></div>
+    </div>
+
+    <div data-form-field="email"
+         data-validate='[
+           {"type":"NotEmpty","options":{"message":"Email is required"}},
+           {"type":"EmailAddress","options":{"message":"Please enter a valid email"}}
+         ]'>
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" />
+      <div id="email-errors" class="invalid-feedback"></div>
+    </div>
+
+    <div data-form-field="message"
+         data-validate='[
+           {"type":"NotEmpty","options":{"message":"Please enter a message"}},
+           {"type":"StringLength","options":{"minimum":10,"message":"Message must be at least 10 characters"}}
+         ]'>
+      <label for="message">Message</label>
+      <textarea id="message" name="message"></textarea>
+      <div id="message-errors" class="invalid-feedback"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send Message</button>
+  </form>
+
+  <script type="module">
+    import { formRegistry, registerDefaultValidators } from '../formz/formz.js';
+
+    registerDefaultValidators();
+
+    formRegistry.init(async (ctx) => {
+      // Simulate a server round-trip
+      await new Promise((r) => setTimeout(r, 600));
+      ctx.finish('<p style="color: var(--form-success); font-weight: 500;">Thank you! Your message has been sent.</p>');
+    });
+  </script>
+</body>
+</html>

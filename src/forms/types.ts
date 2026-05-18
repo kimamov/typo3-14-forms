@@ -10,7 +10,7 @@ export interface ValidatorResult {
 
 export interface Validator {
   type: string;
-  validate(value: string, options: Record<string, unknown>): ValidatorResult;
+  validate(value: string, options: Record<string, unknown>): ValidatorResult | Promise<ValidatorResult>;
 }
 
 export interface FieldState {
@@ -54,18 +54,28 @@ export interface FormEventDetail {
   state: FormState;
 }
 
-export type FormEventHandler = (detail: FieldEventDetail | FormEventDetail) => void;
+export type FieldEventHandler = (detail: FieldEventDetail) => void;
+export type FormLevelEventHandler = (detail: FormEventDetail) => void;
+export type FormEventHandler = FieldEventHandler | FormLevelEventHandler;
 export type RegistryEventHandler = (detail: { formId: string }) => void;
+
+type FieldEvents = 'field:valid' | 'field:invalid' | 'field:change' | 'field:added' | 'field:removed';
+type FormEvents = 'form:valid' | 'form:invalid' | 'form:submit' | 'form:reset';
 
 export interface FormControllerApi {
   readonly id: string;
   getField(name: string): FieldState | undefined;
   getState(): FormState;
   validate(): Promise<boolean>;
+  submit(): void;
   reset(): void;
   destroy(): void;
-  on(event: FormEventType, handler: FormEventHandler): void;
-  off(event: FormEventType, handler: FormEventHandler): void;
+  on(event: FieldEvents, handler: FieldEventHandler): void;
+  on(event: FormEvents, handler: FormLevelEventHandler): void;
+  once(event: FieldEvents, handler: FieldEventHandler): void;
+  once(event: FormEvents, handler: FormLevelEventHandler): void;
+  off(event: FieldEvents, handler: FieldEventHandler): void;
+  off(event: FormEvents, handler: FormLevelEventHandler): void;
 }
 
 export interface FieldPlugin {
@@ -83,14 +93,19 @@ export interface FormPluginHost {
   getFieldValue(name: string): string | undefined;
   getFieldNames(): string[];
   setFieldEnabled(name: string, enabled: boolean): void;
-  on(event: FormEventType, handler: FormEventHandler): void;
-  off(event: FormEventType, handler: FormEventHandler): void;
+  on(event: FieldEvents, handler: FieldEventHandler): void;
+  on(event: FormEvents, handler: FormLevelEventHandler): void;
+  off(event: FieldEvents, handler: FieldEventHandler): void;
+  off(event: FormEvents, handler: FormLevelEventHandler): void;
 }
 
 export interface ClientVariant {
   condition: string;
   enabled?: boolean;
 }
+
+export type FieldControllerEventType = 'change' | 'valid' | 'invalid';
+export type FieldControllerEventHandler = (state: FieldState) => void;
 
 export interface FieldPluginHost {
   readonly name: string;
@@ -99,6 +114,8 @@ export interface FieldPluginHost {
   setValue(value: string): void;
   validate(): void;
   replaceInput(newInput: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): void;
+  on(event: FieldControllerEventType, handler: FieldControllerEventHandler): void;
+  off(event: FieldControllerEventType, handler: FieldControllerEventHandler): void;
 }
 
 export type FieldPluginFactory = () => Promise<{ default: new () => FieldPlugin }>;
@@ -140,7 +157,6 @@ export interface FormSubmitActions {
   finish(html?: string): void;
 }
 
-//@TODO: make we want to pass the entire FormController to give full access
 export interface FormSubmitContext extends FormSubmitActions {
   formEl: HTMLFormElement;
   formData: FormData;

@@ -46,9 +46,11 @@ export default class ComboboxPlugin implements FieldPlugin {
 
   destroy(): void {
     this.abortController.abort();
-    this.select.hidden = false;
-    this.select.removeAttribute('tabindex');
-    this.select.removeAttribute('aria-hidden');
+    if (this.select) {
+      this.select.hidden = false;
+      this.select.removeAttribute('tabindex');
+      this.select.removeAttribute('aria-hidden');
+    }
     this.root?.remove();
   }
 

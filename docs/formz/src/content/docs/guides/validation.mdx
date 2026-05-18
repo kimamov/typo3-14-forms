@@ -1,0 +1,238 @@
+---
+title: Validation
+description: All built-in validators and how to create custom ones.
+---
+
+import FormPreview from '../../../components/FormPreview.astro';
+
+Validation rules are declared in HTML via the `data-validate` attribute as a JSON array. Each rule has a `type` (matching a registered validator) and optional `options`.
+
+```html
+<div data-form-field="age"
+     data-validate='[
+       {"type":"NotEmpty","options":{"message":"Age is required"}},
+       {"type":"Integer","options":{"message":"Must be a whole number"}},
+       {"type":"NumberRange","options":{"minimum":18,"maximum":120,"message":"Must be between 18 and 120"}}
+     ]'>
+  <label for="age">Age</label>
+  <input id="age" type="text" name="age" />
+  <div id="age-errors" class="invalid-feedback"></div>
+</div>
+```
+
+Try each validator below — leave fields empty or enter invalid data to see the error messages:
+
+<FormPreview src="/demos/validation.html" height="720px" title="Built-in validators showcase" />
+
+## Built-in Validators
+
+### NotEmpty
+
+Fails if the value is empty or whitespace-only.
+
+```html
+<div data-form-field="name"
+     data-validate='[{"type":"NotEmpty","options":{"message":"This field is required"}}]'>
+```
+
+### StringLength
+
+Validates minimum and/or maximum string length. Passes on empty values (combine with `NotEmpty` for required fields).
+
+```html
+<div data-form-field="bio"
+     data-validate='[
+       {"type":"StringLength","options":{"minimum":10,"maximum":500,"message":"Must be 10–500 characters"}}
+     ]'>
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `minimum` | `number` | Minimum length |
+| `maximum` | `number` | Maximum length |
+| `message` | `string` | Error message |
+
+### EmailAddress
+
+Validates email format. Passes on empty values.
+
+```html
+<div data-form-field="email"
+     data-validate='[{"type":"EmailAddress","options":{"message":"Invalid email address"}}]'>
+```
+
+### RegularExpression
+
+Tests against a regular expression. Pattern uses PCRE-style delimiters (`/pattern/flags`) as used by TYPO3/PHP.
+
+```html
+<div data-form-field="code"
+     data-validate='[{"type":"RegularExpression","options":{"regularExpression":"/^[A-Z]{3}-\\d{4}$/","message":"Format: ABC-1234"}}]'>
+```
+
+### NumberRange
+
+Validates that a numeric value falls within a range.
+
+```html
+<div data-form-field="quantity"
+     data-validate='[{"type":"NumberRange","options":{"minimum":1,"maximum":99,"message":"Enter 1–99"}}]'>
+```
+
+### Integer
+
+Validates that the value is a whole number.
+
+```html
+<div data-form-field="count"
+     data-validate='[{"type":"Integer","options":{"message":"Must be a whole number"}}]'>
+```
+
+### Float / Number
+
+Validates that the value is a valid decimal/number.
+
+```html
+<div data-form-field="price"
+     data-validate='[{"type":"Float","options":{"message":"Must be a valid number"}}]'>
+```
+
+### Alphanumeric
+
+Only allows Unicode letters and numbers (`\p{L}\p{N}`).
+
+```html
+<div data-form-field="username"
+     data-validate='[{"type":"Alphanumeric","options":{"message":"Letters and numbers only"}}]'>
+```
+
+### DateTime
+
+Validates that the value can be parsed as a date.
+
+```html
+<div data-form-field="birthday"
+     data-validate='[{"type":"DateTime","options":{"message":"Enter a valid date"}}]'>
+```
+
+### DateRange
+
+Validates that a date falls within a range.
+
+```html
+<div data-form-field="eventDate"
+     data-validate='[{"type":"DateRange","options":{"minimum":"2024-01-01","maximum":"2025-12-31","message":"Date must be in 2024–2025"}}]'>
+```
+
+### FileSize
+
+Validates uploaded file sizes. Supports units like `1K`, `5M`, `1G`.
+
+```html
+<div data-form-field="avatar"
+     data-validate='[{"type":"FileSize","options":{"minimum":"1K","maximum":"5M","message":"File must be 1KB–5MB"}}]'>
+  <input type="file" name="avatar" />
+</div>
+```
+
+## Custom Validators
+
+Register a custom validator before initializing forms:
+
+```typescript
+import { formRegistry, registerDefaultValidators } from 'formz';
+
+registerDefaultValidators();
+
+formRegistry.registerValidator({
+  type: 'PasswordStrength',
+  validate(value, options) {
+    if (!value) return { valid: true, message: '' };
+
+    const hasUpper = /[A-Z]/.test(value);
+    const hasLower = /[a-z]/.test(value);
+    const hasNumber = /\d/.test(value);
+    const hasSpecial = /[!@#$%^&*]/.test(value);
+    const strong = hasUpper && hasLower && hasNumber && hasSpecial && value.length >= 8;
+
+    return {
+      valid: strong,
+      message: strong ? '' : (options['message'] as string) ?? 'Password is too weak',
+    };
+  },
+});
+```
+
+Then use it in HTML:
+
+```html
+<div data-form-field="password"
+     data-validate='[
+       {"type":"NotEmpty","options":{"message":"Password is required"}},
+       {"type":"PasswordStrength","options":{"message":"Use 8+ chars with upper, lower, number, and special"}}
+     ]'>
+  <label for="password">Password</label>
+  <input id="password" type="password" name="password" />
+  <div id="password-errors" class="invalid-feedback"></div>
+</div>
+```
+
+## Async Validators
+
+Validators can return a `Promise` for server-side checks:
+
+```typescript
+formRegistry.registerValidator({
+  type: 'UniqueEmail',
+  async validate(value, options) {
+    if (!value) return { valid: true, message: '' };
+
+    const response = await fetch(`/api/check-email?email=${encodeURIComponent(value)}`);
+    const data = await response.json();
+
+    return {
+      valid: data.available,
+      message: data.available ? '' : (options['message'] as string) ?? 'Email already taken',
+    };
+  },
+});
+```
+
+:::caution
+Async validators work with `runValidatorsAsync()` but the default `FieldController.validate()` uses the synchronous `runValidators()`. To use async validators, provide a custom `validate` function in `FieldControllerOptions` that calls `runValidatorsAsync`.
+:::
+
+## Custom Validation Logic per Field
+
+Override the validation pipeline for a specific field using `FieldControllerOptions`:
+
+```typescript
+import { initField } from 'formz';
+
+const ctrl = initField(document.getElementById('confirm-password')!, undefined, {
+  validate(value, rules, defaultValidate) {
+    const result = defaultValidate();
+    if (!result.isValid) return result;
+
+    const password = document.getElementById('password') as HTMLInputElement;
+    if (value !== password.value) {
+      return { isValid: false, errors: ['Passwords do not match'] };
+    }
+    return result;
+  },
+});
+```
+
+## Custom Error Rendering
+
+Replace the default error display with your own:
+
+```typescript
+const ctrl = initField(myElement, undefined, {
+  renderErrors(errors, fieldCtrl) {
+    const container = fieldCtrl.element.querySelector('.my-errors');
+    if (!container) return;
+    container.innerHTML = errors.map(e => `<span class="error-tag">${e}</span>`).join('');
+  },
+});
+```

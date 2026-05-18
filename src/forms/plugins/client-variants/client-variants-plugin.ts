@@ -1,4 +1,4 @@
-import type { FormPlugin, FormPluginHost, FormEventHandler, ClientVariant } from '../../types';
+import type { FormPlugin, FormPluginHost, FieldEventHandler, ClientVariant } from '../../types';
 import { evaluateExpression } from './expression-parser';
 
 interface FieldVariantConfig {
@@ -27,28 +27,35 @@ export default class ClientVariantsPlugin implements FormPlugin {
   private formEl!: HTMLFormElement;
   private configs: FieldVariantConfig[] = [];
   private disabledInput!: HTMLInputElement;
-  private changeHandler!: FormEventHandler;
+  private changeHandler!: FieldEventHandler;
+  private addedHandler!: FieldEventHandler;
 
   async init(formEl: HTMLFormElement, host: FormPluginHost): Promise<void> {
     this.host = host;
     this.formEl = formEl;
 
     this.configs = this.parseConfigs();
-    if (this.configs.length === 0) return;
-
     this.disabledInput = this.createDisabledFieldsInput();
 
     this.changeHandler = () => this.evaluate();
+    this.addedHandler = () => {
+      this.configs = this.parseConfigs();
+      this.evaluate();
+    };
     this.host.on('field:change', this.changeHandler);
-    this.host.on('field:added', this.changeHandler);
+    this.host.on('field:added', this.addedHandler);
 
-    this.evaluate();
+    if (this.configs.length > 0) {
+      this.evaluate();
+    }
   }
 
   destroy(): void {
     if (this.changeHandler) {
       this.host.off('field:change', this.changeHandler);
-      this.host.off('field:added', this.changeHandler);
+    }
+    if (this.addedHandler) {
+      this.host.off('field:added', this.addedHandler);
     }
     this.disabledInput?.remove();
   }
@@ -57,7 +64,7 @@ export default class ClientVariantsPlugin implements FormPlugin {
     const configs: FieldVariantConfig[] = [];
     const wrappers = this.formEl.querySelectorAll<HTMLElement>('[data-client-variants]');
 
-    for (const wrapper of wrappers) {
+    for (const wrapper of Array.from(wrappers)) {
       const fieldName = wrapper.getAttribute('data-form-field');
       const raw = wrapper.getAttribute('data-client-variants');
       if (!fieldName || !raw) continue;

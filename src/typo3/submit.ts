@@ -26,6 +26,14 @@ export function createTypo3Submit(hooks?: Typo3FormsHooks): FormSubmitFunction {
       return;
     }
 
+    if (!response.ok) {
+      const err = new Error(`Server responded with ${response.status}`);
+      console.warn(`[Typo3Forms] ${err.message}, falling back to normal submit`);
+      hooks?.onSubmitError?.(err, formEl);
+      fallbackToNative();
+      return;
+    }
+
     let data: Typo3AjaxFormResponse;
     try {
       data = await response.json();

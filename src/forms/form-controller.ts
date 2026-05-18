@@ -107,8 +107,16 @@ export class FormController implements FormControllerApi, FormPluginHost {
     this.eventBus.destroy();
   }
 
+  submit(): void {
+    this.formEl.requestSubmit();
+  }
+
   on(event: FormEventType, handler: FormEventHandler): void {
     this.eventBus.on(event, handler);
+  }
+
+  once(event: FormEventType, handler: FormEventHandler): void {
+    this.eventBus.once(event, handler);
   }
 
   off(event: FormEventType, handler: FormEventHandler): void {
@@ -239,7 +247,6 @@ export class FormController implements FormControllerApi, FormPluginHost {
     this.formEl.addEventListener(
       'submit',
       async (e) => {
-        //@TODO: maybe the submit function should decide if we can submit in the future
         if (this._allowSubmit) {
           this._allowSubmit = false;
           return;
@@ -249,40 +256,42 @@ export class FormController implements FormControllerApi, FormPluginHost {
         this._isSubmitting = true;
         this.eventBus.emit('form:submit', { formId: this.id, state: this.getState() });
 
-        const isValid = await this.validate();
+        try {
+          const isValid = await this.validate();
 
-        if (isValid) {
-          const submitter = (e as SubmitEvent).submitter;
-          const formData = new FormData(this.formEl, submitter as HTMLButtonElement);
-          await this.submitFn({
-            formEl: this.formEl,
-            formData,
-            submitter,
-            signal: this.abortController.signal,
-            fallbackToNative: () => {
-              this._allowSubmit = true;
-              this.formEl.requestSubmit();
-            },
-            applyValidationErrors: (errors) => {
-              this.applyServerErrors(errors);
-            },
-            nextStep: (state) => {
-              this.updateStateHiddenField(state);
-              this.eventBus.emit('form:valid', { formId: this.id, state: this.getState() });
-            },
-            redirect: (url) => {
-              window.location.href = url;
-            },
-            finish: (html) => {
-              this.destroy();
-              if (html) {
-                this.formEl.outerHTML = html;
-              }
-            },
-          });
+          if (isValid) {
+            const submitter = (e as SubmitEvent).submitter;
+            const formData = new FormData(this.formEl, submitter);
+            await this.submitFn({
+              formEl: this.formEl,
+              formData,
+              submitter,
+              signal: this.abortController.signal,
+              fallbackToNative: () => {
+                this._allowSubmit = true;
+                this.formEl.requestSubmit();
+              },
+              applyValidationErrors: (errors) => {
+                this.applyServerErrors(errors);
+              },
+              nextStep: (state) => {
+                this.updateStateHiddenField(state);
+                this.eventBus.emit('form:valid', { formId: this.id, state: this.getState() });
+              },
+              redirect: (url) => {
+                window.location.href = url;
+              },
+              finish: (html) => {
+                this.destroy();
+                if (html) {
+                  this.formEl.outerHTML = html;
+                }
+              },
+            });
+          }
+        } finally {
+          this._isSubmitting = false;
         }
-
-        this._isSubmitting = false;
       },
       { signal },
     );
