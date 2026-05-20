@@ -64,6 +64,11 @@ final class ValidationDataViewHelper extends AbstractViewHelper
 
     private const FILTERED_OPTIONS = ['is_required'];
 
+    /** Validators handled server-side only — no client-side counterpart. */
+    private const SERVER_ONLY_VALIDATORS = [
+        'AltchaValidator',
+    ];
+
     public function __construct(
         private readonly TranslationService $translationService,
     ) {}
@@ -86,6 +91,11 @@ final class ValidationDataViewHelper extends AbstractViewHelper
         $validatorData = [];
         foreach ($element->getValidators() as $validator) {
             $shortName = (new \ReflectionClass($validator))->getShortName();
+
+            if (in_array($shortName, self::SERVER_ONLY_VALIDATORS, true)) {
+                continue;
+            }
+
             $identifier = self::VALIDATOR_CLASS_MAP[$shortName]
                 ?? str_replace('Validator', '', $shortName);
 
