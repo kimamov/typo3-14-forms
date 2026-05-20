@@ -19,6 +19,7 @@ prototypes:
         renderingOptions:
           partialRootPaths:
             20: 'EXT:sitepackage/Resources/Private/Frontend/Partials/'
+            200: 'EXT:sitepackage/Resources/Private/Frontend/Partials/'
           templateRootPaths:
             20: 'EXT:sitepackage/Resources/Private/Frontend/Templates/'
           useAjax: false

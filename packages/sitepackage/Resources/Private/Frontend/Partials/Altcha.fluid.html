@@ -1,0 +1,36 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
+    xmlns:altcha="http://typo3.org/ns/BBysaeth/Typo3Altcha/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<formvh:renderRenderable renderable="{element}">
+    <f:variable name="fieldType" value="altcha" />
+
+    <f:render partial="Field/Field" arguments="{element: element, fieldType: fieldType, doNotShowLabel: 1}" contentAs="elementContent">
+        <altcha:form.altcha property="{element.identifier}" id="{element.uniqueIdentifier}"
+            class="{element.properties.elementClassAttribute}">
+            <f:if condition="{settings.challengeUrl}">
+                <f:then>
+                    <f:if condition="{settings.apiKey}">
+                        <f:then>
+                            <f:variable name="challengeValue" value="/?type=1768669001" />
+                        </f:then>
+                        <f:else>
+                            <f:variable name="challengeValue" value="{settings.challengeUrl}" />
+                        </f:else>
+                    </f:if>
+                </f:then>
+                <f:else>
+                    <f:variable name="challengeValue" value="/?type=1768669000" />
+                </f:else>
+            </f:if>
+
+            <input type="hidden"
+                name="{name}"
+                id="{element.uniqueIdentifier}"
+                value=""
+                data-altcha-challenge="{challengeValue}" />
+        </altcha:form.altcha>
+    </f:render>
+</formvh:renderRenderable>
+
+</html>
