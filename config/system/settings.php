@@ -26,6 +26,9 @@ return [
         ],
     ],
     'EXTENSIONS' => [
+        'altcha' => [
+            'hmac' => '',
+        ],
         'backend' => [
             'backendFavicon' => '',
             'backendLogo' => '',
@@ -113,6 +116,7 @@ return [
         'sitename' => 'forms',
         'systemMaintainers' => [
             1,
+            3,
         ],
     ],
 ];

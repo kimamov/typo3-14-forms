@@ -4,8 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0acf75360dbda9c85facfb34d067897f",
+    "content-hash": "fd68f52d1ac84c965919a8fe0c106d58",
     "packages": [
+        {
+            "name": "altcha-org/altcha",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/altcha-org/altcha-lib-php.git",
+                "reference": "1028107ae5455edd92b27aa2de0fa9e278e2f2ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/altcha-org/altcha-lib-php/zipball/1028107ae5455edd92b27aa2de0fa9e278e2f2ff",
+                "reference": "1028107ae5455edd92b27aa2de0fa9e278e2f2ff",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.72",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^10.5 || ^11.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AltchaOrg\\Altcha\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Regeci",
+                    "email": "536331+ovx@users.noreply.github.com"
+                }
+            ],
+            "description": "A lightweight PHP library for creating and verifying ALTCHA challenges.",
+            "support": {
+                "issues": "https://github.com/altcha-org/altcha-lib-php/issues",
+                "source": "https://github.com/altcha-org/altcha-lib-php/tree/v2.0.2"
+            },
+            "time": "2026-04-29T07:31:42+00:00"
+        },
         {
             "name": "bacon/bacon-qr-code",
             "version": "v3.1.1",
@@ -60,6 +107,75 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.1.1"
             },
             "time": "2026-04-05T21:06:35+00:00"
+        },
+        {
+            "name": "bbysaeth/typo3-altcha",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bbysaeth/typo3-altcha.git",
+                "reference": "5dee9e7d2289392d8021d5274d85c4bea68b6821"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bbysaeth/typo3-altcha/zipball/5dee9e7d2289392d8021d5274d85c4bea68b6821",
+                "reference": "5dee9e7d2289392d8021d5274d85c4bea68b6821",
+                "shasum": ""
+            },
+            "require": {
+                "altcha-org/altcha": "^2.0",
+                "typo3/cms-backend": "^13.4 || ^14.0",
+                "typo3/cms-core": "^13.4 || ^14.0",
+                "typo3/cms-extbase": "^13.4 || ^14.0",
+                "typo3/cms-fluid": "^13.4 || ^14.0",
+                "typo3/cms-form": "^13.4 || ^14.0"
+            },
+            "require-dev": {
+                "helmich/typo3-typoscript-lint": "^3.2",
+                "phpstan/phpstan": "^2.1"
+            },
+            "suggest": {
+                "typo3/cms-scheduler": "^13.4 || ^14.0"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "altcha"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BBysaeth\\Typo3Altcha\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Bysäth",
+                    "email": "benjamin@bysaeth.de"
+                }
+            ],
+            "description": "TYPO3 form element for spam protection by utilizing the proof-of-work mechanism Altcha.",
+            "homepage": "https://github.com/bbysaeth/typo3-altcha",
+            "keywords": [
+                "ALTCHA",
+                "Abuse",
+                "bot",
+                "captcha",
+                "proof-of-work",
+                "recaptcha",
+                "spam",
+                "spam-protection",
+                "typo3"
+            ],
+            "support": {
+                "issues": "https://github.com/bbysaeth/typo3-altcha/issues",
+                "source": "https://github.com/bbysaeth/typo3-altcha/tree/v1.0.0"
+            },
+            "time": "2026-04-17T10:25:29+00:00"
         },
         {
             "name": "christian-riesen/base32",
@@ -5308,13 +5424,14 @@
         },
         {
             "name": "t13-forms/sitepackage",
-            "version": "dev-typo3-forms-options-importer",
+            "version": "dev-fe-form-extension",
             "dist": {
                 "type": "path",
                 "url": "./packages/sitepackage",
-                "reference": "50f55fb3d1d6f37a7c627f44ca2ab35b0aa6f22a"
+                "reference": "6b3d0ed6294951a4d19aee85fd7b67ab652430da"
             },
             "require": {
+                "altcha-org/altcha": "^2.0",
                 "praetorius/vite-asset-collector": "^1.16",
                 "typo3/cms-core": "^14.3",
                 "typo3/cms-fluid-styled-content": "^14.3",
@@ -5330,6 +5447,11 @@
             "autoload": {
                 "psr-4": {
                     "T13Forms\\Sitepackage\\": "Classes/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "T13Forms\\Sitepackage\\Tests\\": "Tests/"
                 }
             },
             "license": [
@@ -9147,6 +9269,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "bbysaeth/typo3-altcha": 10,
         "t13-forms/sitepackage": 20
     },
     "prefer-stable": false,
@@ -9156,5 +9279,5 @@
     "platform-overrides": {
         "php": "8.2.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
