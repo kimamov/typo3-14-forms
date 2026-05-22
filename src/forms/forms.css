@@ -138,7 +138,7 @@ form[id] {
 }
 
 .form-check-input,
-[data-form-field] input[type="checkbox"],
+[data-form-field] input[type="checkbox"]:not(.altcha-container *),
 [data-form-field] input[type="radio"] {
   flex-shrink: 0;
   width: 1.125rem;
@@ -169,7 +169,7 @@ form[id] {
   }
 }
 
-[data-form-field] input[type="checkbox"] {
+[data-form-field] input[type="checkbox"]:not(.altcha-container *) {
   border-radius: 3px;
 
   &:checked {
@@ -452,6 +452,19 @@ select[hidden][aria-hidden="true"] {
   font-size: 0.875rem;
   color: var(--text);
   font-style: italic;
+}
+
+/* ------------------------------------------------------------------ */
+/*  ALTCHA captcha plugin                                              */
+/* ------------------------------------------------------------------ */
+
+.altcha-container {
+  --altcha-max-width: 100%;
+}
+
+.altcha-container altcha-widget {
+  font-size: inherit;
+  line-height: inherit;
 }
 
 /* ------------------------------------------------------------------ */

@@ -12,7 +12,7 @@ export default defineConfig({
     outDir: resolve(__dirname, 'docs/formz/public/formz'),
     emptyOutDir: true,
     rollupOptions: {
-      external: ['air-datepicker'],
+      external: ['air-datepicker', /^altcha/],
     },
   },
 });

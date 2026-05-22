@@ -26,6 +26,7 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
 
   registerPlugin('combobox', () => import('../forms/plugins/combobox'));
   registerPlugin('datepicker', () => import('../forms/plugins/datepicker'));
+  registerPlugin('altcha', () => import('./plugins/altcha'));
   formRegistry.registerFormPlugin(() => import('../forms/plugins/client-variants/client-variants-plugin'));
 
   for (const [type, factory] of Object.entries(options?.additionalFieldPlugins ?? {})) {
