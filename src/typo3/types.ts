@@ -35,6 +35,7 @@ export interface Typo3AjaxFormResponse extends AjaxFormResponse {
 }
 
 export type Typo3RemountFn = (oldFormEl: HTMLFormElement, html: string) => HTMLFormElement | null;
+export type Typo3UnmountFn = (formEl: HTMLFormElement) => void;
 
 export interface Typo3FormsApi {
   registry: FormRegistry;

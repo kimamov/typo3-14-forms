@@ -132,6 +132,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
             $request,
         );
         $formDefinition['persistenceIdentifier'] = $persistenceIdentifier;
+        $formDefinition['renderingOptions']['useAjax'] = true;
         $formDefinition = ArrayUtility::setValueByPath(
             $formDefinition,
             'renderingOptions._originalIdentifier',

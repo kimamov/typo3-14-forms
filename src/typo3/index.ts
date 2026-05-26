@@ -39,6 +39,10 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
 
   const controllerOptions = options?.fieldSelector ? { fieldSelector: options.fieldSelector } : undefined;
 
+  const unmount = (formEl: HTMLFormElement): void => {
+    formRegistry.unregister(formEl.id);
+  };
+
   const remount = (oldFormEl: HTMLFormElement, html: string): HTMLFormElement | null => {
     const formId = oldFormEl.id;
     formRegistry.unregister(formId);
@@ -53,7 +57,7 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
   };
 
   let submitFn: FormSubmitFunction;
-  submitFn = options?.onSubmit ?? createTypo3Submit(options?.hooks, remount);
+  submitFn = options?.onSubmit ?? createTypo3Submit(options?.hooks, { remount, unmount });
 
   let registeredHandler: RegistryEventHandler | null = null;
   if (options?.hooks?.onFormRegistered) {
