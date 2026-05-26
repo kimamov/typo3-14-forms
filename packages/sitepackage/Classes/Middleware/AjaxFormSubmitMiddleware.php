@@ -59,6 +59,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                 'finished' => false,
                 'redirect' => null,
                 'message' => null,
+                'html' => null,
                 'state' => '',
             ], 500);
         }
@@ -85,6 +86,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                 'finished' => false,
                 'redirect' => null,
                 'message' => null,
+                'html' => null,
                 'state' => '',
             ], 400);
         }
@@ -98,6 +100,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                 'finished' => false,
                 'redirect' => null,
                 'message' => null,
+                'html' => null,
                 'state' => '',
             ], 400);
         }
@@ -112,6 +115,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                 'finished' => false,
                 'redirect' => null,
                 'message' => null,
+                'html' => null,
                 'state' => '',
             ], 400);
         }
@@ -180,6 +184,11 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
         $isValid = $errors === [];
         $currentPageIndex = $currentPage?->getIndex() ?? 0;
 
+        $html = null;
+        if ($isValid && !$isAfterLastPage && $totalPages > 1) {
+            $html = $this->renderNextStep($formRuntime);
+        }
+
         return new JsonResponse([
             'valid' => $isValid,
             'errors' => $errors,
@@ -187,6 +196,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
             'finished' => false,
             'redirect' => null,
             'message' => null,
+            'html' => $html,
             'state' => $newState,
         ]);
     }
@@ -206,6 +216,7 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                 'finished' => true,
                 'redirect' => null,
                 'message' => is_string($output) && $output !== '' ? $output : null,
+                'html' => null,
                 'state' => $state,
             ]);
         } catch (PropagateResponseException $e) {
@@ -221,11 +232,27 @@ final class AjaxFormSubmitMiddleware implements MiddlewareInterface
                     'finished' => true,
                     'redirect' => $redirectUrl,
                     'message' => null,
+                    'html' => null,
                     'state' => $state,
                 ]);
             }
 
             throw $e;
+        }
+    }
+
+    /**
+     * Renders the form's current page (i.e. the next step the user should see)
+     * via the configured FormRuntime renderer.
+     */
+    private function renderNextStep(
+        \TYPO3\CMS\Form\Domain\Runtime\FormRuntime $formRuntime,
+    ): ?string {
+        try {
+            $output = $formRuntime->render();
+            return is_string($output) && $output !== '' ? $output : null;
+        } catch (PropagateResponseException) {
+            return null;
         }
     }
 

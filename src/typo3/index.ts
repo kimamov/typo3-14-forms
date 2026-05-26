@@ -3,7 +3,7 @@ import { registerPlugin } from '../forms/plugins/index';
 import { registerDefaultValidators } from '../forms/validators';
 import { createTypo3Submit } from './submit';
 import type { Typo3FormsOptions, Typo3FormsApi } from './types';
-import type { RegistryEventHandler } from '../forms/types';
+import type { FormSubmitFunction, RegistryEventHandler } from '../forms/types';
 
 export type { Typo3FormsOptions, Typo3FormsHooks, Typo3AjaxFormResponse, Typo3FormsApi } from './types';
 
@@ -37,7 +37,23 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
     formRegistry.registerFormPlugin(factory);
   }
 
-  const submitFn = options?.onSubmit ?? createTypo3Submit(options?.hooks);
+  const controllerOptions = options?.fieldSelector ? { fieldSelector: options.fieldSelector } : undefined;
+
+  const remount = (oldFormEl: HTMLFormElement, html: string): HTMLFormElement | null => {
+    const formId = oldFormEl.id;
+    formRegistry.unregister(formId);
+
+    oldFormEl.outerHTML = html;
+
+    const newFormEl = document.getElementById(formId) as HTMLFormElement | null;
+    if (newFormEl) {
+      formRegistry.register(newFormEl, submitFn, controllerOptions);
+    }
+    return newFormEl;
+  };
+
+  let submitFn: FormSubmitFunction;
+  submitFn = options?.onSubmit ?? createTypo3Submit(options?.hooks, remount);
 
   let registeredHandler: RegistryEventHandler | null = null;
   if (options?.hooks?.onFormRegistered) {
@@ -50,7 +66,6 @@ export function initTypo3Forms(options?: Typo3FormsOptions): Typo3FormsApi {
   }
 
   const formSelector = options?.formSelector;
-  const controllerOptions = options?.fieldSelector ? { fieldSelector: options.fieldSelector } : undefined;
 
   const init = () => formRegistry.init(submitFn, document, formSelector, controllerOptions);
 

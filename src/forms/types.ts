@@ -149,8 +149,6 @@ export interface FormSubmitActions {
   fallbackToNative(): void;
   /** Apply server-side field validation errors and focus the first invalid field. */
   applyValidationErrors(errors: Record<string, string[]>): void;
-  /** Advance a multi-step form to the next page by updating the hidden state field. */
-  nextStep(state: string): void;
   /** Navigate to a URL after successful submission. */
   redirect(url: string): void;
   /** Replace the form element with the provided HTML after final submission. */

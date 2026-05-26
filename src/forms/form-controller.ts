@@ -274,10 +274,6 @@ export class FormController implements FormControllerApi, FormPluginHost {
               applyValidationErrors: (errors) => {
                 this.applyServerErrors(errors);
               },
-              nextStep: (state) => {
-                this.updateStateHiddenField(state);
-                this.eventBus.emit('form:valid', { formId: this.id, state: this.getState() });
-              },
               redirect: (url) => {
                 window.location.href = url;
               },
@@ -312,14 +308,6 @@ export class FormController implements FormControllerApi, FormPluginHost {
 
     const detail: FormEventDetail = { formId: this.id, state: this.getState() };
     this.eventBus.emit('form:invalid', detail);
-  }
-
-  private updateStateHiddenField(state: string): void {
-    if (!state) return;
-    const stateInput = this.formEl.querySelector<HTMLInputElement>('input[name$="[__state]"]');
-    if (stateInput) {
-      stateInput.value = state;
-    }
   }
 
   private computeIsValid(): boolean {

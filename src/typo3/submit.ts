@@ -1,9 +1,16 @@
 import type { FormSubmitFunction } from '../forms/types';
-import type { Typo3AjaxFormResponse, Typo3FormsHooks } from './types';
+import type { Typo3AjaxFormResponse, Typo3FormsHooks, Typo3RemountFn } from './types';
 
-export function createTypo3Submit(hooks?: Typo3FormsHooks): FormSubmitFunction {
+function updateHiddenField(formEl: HTMLFormElement, selector: string, value: string): void {
+  const input = formEl.querySelector<HTMLInputElement>(selector);
+  if (input) {
+    input.value = value;
+  }
+}
+
+export function createTypo3Submit(hooks?: Typo3FormsHooks, remount?: Typo3RemountFn): FormSubmitFunction {
   return async (ctx) => {
-    const { formEl, formData, signal, fallbackToNative, applyValidationErrors, nextStep, redirect, finish } = ctx;
+    const { formEl, formData, signal, fallbackToNative, applyValidationErrors, redirect, finish } = ctx;
 
     if (hooks?.onBeforeSubmit?.(ctx) === false) {
       return;
@@ -47,6 +54,9 @@ export function createTypo3Submit(hooks?: Typo3FormsHooks): FormSubmitFunction {
     hooks?.onAfterSubmit?.(data, formEl);
 
     if (!data.valid) {
+      if (data.state) {
+        updateHiddenField(formEl, 'input[name$="[__state]"]', data.state);
+      }
       applyValidationErrors(data.errors);
       hooks?.onValidationError?.(data.errors, formEl);
       return;
@@ -62,11 +72,14 @@ export function createTypo3Submit(hooks?: Typo3FormsHooks): FormSubmitFunction {
       return;
     }
 
-    if (data.html) {
-      formEl.innerHTML = data.html;
+    if (data.html && remount) {
+      const newFormEl = remount(formEl, data.html);
+      hooks?.onStepChange?.(data.page, newFormEl ?? formEl);
+    } else {
+      if (data.state) {
+        updateHiddenField(formEl, 'input[name$="[__state]"]', data.state);
+      }
+      hooks?.onStepChange?.(data.page, formEl);
     }
-
-    nextStep(data.state);
-    hooks?.onStepChange?.(data.page, formEl);
   };
 }

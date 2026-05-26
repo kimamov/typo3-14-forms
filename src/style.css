@@ -294,3 +294,11 @@ code {
     border-right-color: var(--border);
   }
 }
+
+
+.t3-form{
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  margin: 30px;
+}
