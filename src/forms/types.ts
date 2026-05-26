@@ -39,6 +39,7 @@ export type FormEventType =
   | 'form:valid'
   | 'form:invalid'
   | 'form:submit'
+  | 'form:loading'
   | 'form:reset';
 
 export type RegistryEventType = 'form:registered' | 'form:unregistered';
@@ -60,7 +61,22 @@ export type FormEventHandler = FieldEventHandler | FormLevelEventHandler;
 export type RegistryEventHandler = (detail: { formId: string }) => void;
 
 type FieldEvents = 'field:valid' | 'field:invalid' | 'field:change' | 'field:added' | 'field:removed';
-type FormEvents = 'form:valid' | 'form:invalid' | 'form:submit' | 'form:reset';
+type FormEvents = 'form:valid' | 'form:invalid' | 'form:submit' | 'form:loading' | 'form:reset';
+
+export interface FormLoadingStateDetail {
+  formId: string;
+  isSubmitting: boolean;
+  submitter: HTMLElement | null;
+  formEl: HTMLFormElement;
+  state: FormState;
+}
+
+export interface FormLoadingStateOptions {
+  /** Attribute toggled on the submit button. Default: `data-loading`. */
+  attribute?: string;
+  /** Selector used when no submitter is available. Default: submit buttons in the form. */
+  submitSelector?: string;
+}
 
 export interface FormControllerApi {
   readonly id: string;

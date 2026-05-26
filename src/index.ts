@@ -37,6 +37,8 @@ export type {
   AjaxFormResponse,
   FieldControllerEventType,
   FieldControllerEventHandler,
+  FormLoadingStateDetail,
+  FormLoadingStateOptions,
 } from './forms/types';
 
 export type { FieldControllerOptions, FieldValidationResult } from './forms/field-controller';

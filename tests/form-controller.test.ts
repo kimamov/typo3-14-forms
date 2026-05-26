@@ -549,7 +549,6 @@ describe('FormController', () => {
 
       form.dispatchEvent(new SubmitEvent('submit', { cancelable: true }));
 
-      // wait for async submit handler
       await new Promise((r) => setTimeout(r, 10));
 
       expect(submitFn).toHaveBeenCalledOnce();
@@ -580,6 +579,145 @@ describe('FormController', () => {
       await new Promise((r) => setTimeout(r, 10));
 
       expect(handler).toHaveBeenCalledOnce();
+    });
+
+    it('toggles data-loading on the submit button by default', async () => {
+      const form = createRegistrationForm();
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      let resolveSubmit: (() => void) | undefined;
+      const submitFn: FormSubmitFunction = async () => {
+        await new Promise<void>((resolve) => {
+          resolveSubmit = resolve;
+        });
+      };
+      new FormController(form, submitFn);
+
+      (document.getElementById('firstName') as HTMLInputElement).value = 'John';
+      (document.getElementById('lastName') as HTMLInputElement).value = 'Doe';
+      (document.getElementById('email') as HTMLInputElement).value = 'j@test.com';
+      (document.getElementById('age') as HTMLInputElement).value = '25';
+      (document.getElementById('country') as HTMLSelectElement).value = 'de';
+      (document.getElementById('terms') as HTMLInputElement).checked = true;
+
+      form.dispatchEvent(new SubmitEvent('submit', { cancelable: true, submitter: submitButton }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(submitButton.hasAttribute('data-loading')).toBe(true);
+
+      resolveSubmit?.();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(submitButton.hasAttribute('data-loading')).toBe(false);
+    });
+
+    it('does not toggle data-loading when loadingState is false', async () => {
+      const form = createRegistrationForm();
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      let resolveSubmit: (() => void) | undefined;
+      const submitFn: FormSubmitFunction = async () => {
+        await new Promise<void>((resolve) => {
+          resolveSubmit = resolve;
+        });
+      };
+      new FormController(form, submitFn, { loadingState: false });
+
+      (document.getElementById('firstName') as HTMLInputElement).value = 'John';
+      (document.getElementById('lastName') as HTMLInputElement).value = 'Doe';
+      (document.getElementById('email') as HTMLInputElement).value = 'j@test.com';
+      (document.getElementById('age') as HTMLInputElement).value = '25';
+      (document.getElementById('country') as HTMLSelectElement).value = 'de';
+      (document.getElementById('terms') as HTMLInputElement).checked = true;
+
+      form.dispatchEvent(new SubmitEvent('submit', { cancelable: true, submitter: submitButton }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(submitButton.hasAttribute('data-loading')).toBe(false);
+
+      resolveSubmit?.();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(submitButton.hasAttribute('data-loading')).toBe(false);
+    });
+
+    it('calls onLoadingStateChange when loading state changes', async () => {
+      const form = createRegistrationForm();
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const onLoadingStateChange = vi.fn();
+      let resolveSubmit: (() => void) | undefined;
+      const submitFn: FormSubmitFunction = async () => {
+        await new Promise<void>((resolve) => {
+          resolveSubmit = resolve;
+        });
+      };
+      new FormController(form, submitFn, { onLoadingStateChange });
+
+      (document.getElementById('firstName') as HTMLInputElement).value = 'John';
+      (document.getElementById('lastName') as HTMLInputElement).value = 'Doe';
+      (document.getElementById('email') as HTMLInputElement).value = 'j@test.com';
+      (document.getElementById('age') as HTMLInputElement).value = '25';
+      (document.getElementById('country') as HTMLSelectElement).value = 'de';
+      (document.getElementById('terms') as HTMLInputElement).checked = true;
+
+      form.dispatchEvent(new SubmitEvent('submit', { cancelable: true, submitter: submitButton }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(onLoadingStateChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          formId: 'registration',
+          isSubmitting: true,
+          submitter: submitButton,
+          formEl: form,
+        }),
+      );
+
+      resolveSubmit?.();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(onLoadingStateChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          isSubmitting: false,
+          submitter: submitButton,
+        }),
+      );
+    });
+
+    it('emits form:loading when loading state changes', async () => {
+      const form = createRegistrationForm();
+      const handler = vi.fn();
+      let resolveSubmit: (() => void) | undefined;
+      const submitFn: FormSubmitFunction = async () => {
+        await new Promise<void>((resolve) => {
+          resolveSubmit = resolve;
+        });
+      };
+      const ctrl = new FormController(form, submitFn);
+      ctrl.on('form:loading', handler);
+
+      (document.getElementById('firstName') as HTMLInputElement).value = 'John';
+      (document.getElementById('lastName') as HTMLInputElement).value = 'Doe';
+      (document.getElementById('email') as HTMLInputElement).value = 'j@test.com';
+      (document.getElementById('age') as HTMLInputElement).value = '25';
+      (document.getElementById('country') as HTMLSelectElement).value = 'de';
+      (document.getElementById('terms') as HTMLInputElement).checked = true;
+
+      form.dispatchEvent(new SubmitEvent('submit', { cancelable: true }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(handler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          formId: 'registration',
+          state: expect.objectContaining({ isSubmitting: true }),
+        }),
+      );
+
+      resolveSubmit?.();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(handler).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          state: expect.objectContaining({ isSubmitting: false }),
+        }),
+      );
     });
   });
 

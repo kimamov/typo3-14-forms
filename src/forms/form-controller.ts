@@ -9,14 +9,23 @@ import type {
   FormPlugin,
   FieldState,
   FormSubmitFunction,
+  FormLoadingStateDetail,
+  FormLoadingStateOptions,
 } from './types';
 import { SELECTORS } from './types';
 import { FieldController } from './field-controller';
 import { EventBus } from './events';
 import { getPluginFactory } from './plugins/index';
 
+const DEFAULT_SUBMIT_SELECTOR = 'button[type="submit"], input[type="submit"]';
+const DEFAULT_LOADING_ATTRIBUTE = 'data-loading';
+
 export interface FormControllerOptions {
   fieldSelector?: string;
+  /** Set to `false` to disable built-in submit-button loading UI. */
+  loadingState?: false | FormLoadingStateOptions;
+  /** Called whenever the form loading state changes. Runs after built-in UI unless disabled. */
+  onLoadingStateChange?: (detail: FormLoadingStateDetail) => void;
 }
 
 export class FormController implements FormControllerApi, FormPluginHost {
@@ -29,15 +38,20 @@ export class FormController implements FormControllerApi, FormPluginHost {
   private readonly observer: MutationObserver;
   private readonly abortController = new AbortController();
   private readonly submitFn: FormSubmitFunction;
+  private readonly loadingStateOptions: false | FormLoadingStateOptions;
+  private readonly onLoadingStateChange?: (detail: FormLoadingStateDetail) => void;
 
   private _isSubmitting = false;
   private _allowSubmit = false;
+  private _activeSubmitter: HTMLElement | null = null;
 
   constructor(formEl: HTMLFormElement, submitFn: FormSubmitFunction, options?: FormControllerOptions) {
     this.formEl = formEl;
     this.id = formEl.id;
     this.submitFn = submitFn;
     this.fieldSelector = options?.fieldSelector ?? SELECTORS.formField;
+    this.loadingStateOptions = options?.loadingState ?? {};
+    this.onLoadingStateChange = options?.onLoadingStateChange;
 
     this.formEl.setAttribute('novalidate', '');
 
@@ -94,6 +108,9 @@ export class FormController implements FormControllerApi, FormPluginHost {
   }
 
   destroy(): void {
+    if (this._isSubmitting) {
+      this.setSubmitting(false, this._activeSubmitter);
+    }
     this.abortController.abort();
     this.observer.disconnect();
     for (const plugin of this.formPlugins) {
@@ -253,15 +270,17 @@ export class FormController implements FormControllerApi, FormPluginHost {
         }
 
         e.preventDefault();
-        this._isSubmitting = true;
+        const submitter = (e as SubmitEvent).submitter instanceof HTMLElement
+          ? (e as SubmitEvent).submitter
+          : null;
+        this.setSubmitting(true, submitter);
         this.eventBus.emit('form:submit', { formId: this.id, state: this.getState() });
 
         try {
           const isValid = await this.validate();
 
           if (isValid) {
-            const submitter = (e as SubmitEvent).submitter;
-            const formData = new FormData(this.formEl, submitter);
+            const formData = new FormData(this.formEl, submitter ?? undefined);
             await this.submitFn({
               formEl: this.formEl,
               formData,
@@ -286,7 +305,7 @@ export class FormController implements FormControllerApi, FormPluginHost {
             });
           }
         } finally {
-          this._isSubmitting = false;
+          this.setSubmitting(false, submitter);
         }
       },
       { signal },
@@ -308,6 +327,54 @@ export class FormController implements FormControllerApi, FormPluginHost {
 
     const detail: FormEventDetail = { formId: this.id, state: this.getState() };
     this.eventBus.emit('form:invalid', detail);
+  }
+
+  private applyDefaultLoadingState(submitter: HTMLElement | null, isSubmitting: boolean): void {
+    if (this.loadingStateOptions === false) {
+      return;
+    }
+
+    const attribute = this.loadingStateOptions.attribute ?? DEFAULT_LOADING_ATTRIBUTE;
+    const target = this.resolveSubmitter(submitter);
+    if (!target) {
+      return;
+    }
+
+    if (isSubmitting) {
+      target.setAttribute(attribute, '');
+    } else {
+      target.removeAttribute(attribute);
+    }
+  }
+
+  private resolveSubmitter(submitter: HTMLElement | null): HTMLElement | null {
+    if (submitter instanceof HTMLElement && this.formEl.contains(submitter)) {
+      return submitter;
+    }
+
+    const selector = this.loadingStateOptions === false
+      ? DEFAULT_SUBMIT_SELECTOR
+      : (this.loadingStateOptions.submitSelector ?? DEFAULT_SUBMIT_SELECTOR);
+
+    return this.formEl.querySelector<HTMLElement>(selector);
+  }
+
+  private setSubmitting(isSubmitting: boolean, submitter: HTMLElement | null): void {
+    this._isSubmitting = isSubmitting;
+    this._activeSubmitter = isSubmitting ? submitter : null;
+
+    this.applyDefaultLoadingState(submitter, isSubmitting);
+
+    const detail: FormLoadingStateDetail = {
+      formId: this.id,
+      isSubmitting,
+      submitter,
+      formEl: this.formEl,
+      state: this.getState(),
+    };
+
+    this.onLoadingStateChange?.(detail);
+    this.eventBus.emit('form:loading', { formId: this.id, state: detail.state });
   }
 
   private computeIsValid(): boolean {
