@@ -19,6 +19,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Validation', slug: 'guides/validation' },
 						{ label: 'Events & Hooks', slug: 'guides/events' },
+						{ label: 'Loading State', slug: 'guides/loading-state' },
 						{ label: 'Plugins', slug: 'guides/plugins' },
 						{ label: 'Standalone Fields', slug: 'guides/standalone-fields' },
 					],
@@ -28,6 +29,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Setup', slug: 'guides/typo3-setup' },
 						{ label: 'Multistep Forms', slug: 'guides/typo3-multistep' },
+						{ label: 'Backend (PHP)', slug: 'guides/typo3-backend' },
 					],
 				},
 				{

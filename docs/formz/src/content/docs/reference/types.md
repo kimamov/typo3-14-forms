@@ -17,6 +17,7 @@ type FormEventType =
   | 'form:valid'     // FormEventDetail
   | 'form:invalid'   // FormEventDetail
   | 'form:submit'    // FormEventDetail
+  | 'form:loading'   // FormEventDetail
   | 'form:reset';    // FormEventDetail
 ```
 
@@ -44,6 +45,29 @@ interface FieldEventDetail {
 interface FormEventDetail {
   formId: string;
   state: FormState;
+}
+
+interface FormLoadingStateDetail {
+  formId: string;
+  isSubmitting: boolean;
+  submitter: HTMLElement | null;
+  formEl: HTMLFormElement;
+  state: FormState;
+}
+
+interface FormLoadingStateOptions {
+  attribute?: string;
+  submitSelector?: string;
+}
+```
+
+## FormControllerOptions
+
+```typescript
+interface FormControllerOptions {
+  fieldSelector?: string;
+  loadingState?: false | FormLoadingStateOptions;
+  onLoadingStateChange?: (detail: FormLoadingStateDetail) => void;
 }
 ```
 
@@ -137,7 +161,6 @@ interface FormPluginHost {
 interface FormSubmitActions {
   fallbackToNative(): void;
   applyValidationErrors(errors: Record<string, string[]>): void;
-  nextStep(state: string): void;
   redirect(url: string): void;
   finish(html?: string): void;
 }
@@ -184,8 +207,11 @@ interface Typo3AjaxFormResponse {
   redirect: string | null;
   message: string | null;
   state: string;
-  html?: string;
+  html?: string | null;
 }
+
+type Typo3RemountFn = (oldFormEl: HTMLFormElement, html: string) => HTMLFormElement | null;
+type Typo3UnmountFn = (formEl: HTMLFormElement) => void;
 
 interface Typo3FormsApi {
   registry: FormRegistry;

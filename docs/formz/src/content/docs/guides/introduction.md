@@ -11,6 +11,7 @@ Formz scans your HTML for forms and fields marked with `data-*` attributes, then
 
 - **Validation** — declarative rules via `data-validate` JSON, with 12 built-in validators
 - **State tracking** — dirty, touched, valid, submitting states per field and form
+- **Loading UI** — `data-loading` on submit buttons during submission
 - **Error display** — automatic ARIA-compliant error rendering
 - **Plugins** — combobox, datepicker, or your own custom field enhancements
 - **Events** — form-level and field-level event system for custom behavior
@@ -62,7 +63,7 @@ Formz is split into two layers:
 
 | Layer | Import | Purpose |
 |-------|--------|---------|
-| **Generic** | `import { formRegistry, initField } from 'formz'` | Framework-agnostic form/field controllers, validators, plugins, events |
-| **TYPO3** | `import { initTypo3Forms } from 'formz'` | One-call setup for TYPO3 EXT:form with AJAX submit, multistep, and hooks |
+| **Generic** | `import { formRegistry, initField } from 'formz'` | Framework-agnostic form/field controllers, validators, plugins, events, loading state |
+| **TYPO3** | `import { initTypo3Forms } from 'formz'` | One-call setup for TYPO3 EXT:form with AJAX submit, multistep remounting, and hooks |
 
 The generic layer has zero TYPO3 knowledge. The TYPO3 layer is a thin wrapper that configures the generic library with TYPO3-specific defaults.

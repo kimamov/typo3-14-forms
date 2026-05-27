@@ -5,6 +5,25 @@ description: API reference for individual form controllers.
 
 A `FormControllerApi` is returned by `formRegistry.register()` or `formRegistry.get()`. It controls a single `<form>` element.
 
+## FormControllerOptions
+
+Pass options as the third argument to `formRegistry.register()` or `formRegistry.init()`:
+
+```typescript
+interface FormControllerOptions {
+  fieldSelector?: string;
+  loadingState?: false | FormLoadingStateOptions;
+  onLoadingStateChange?: (detail: FormLoadingStateDetail) => void;
+}
+
+interface FormLoadingStateOptions {
+  attribute?: string;       // default: 'data-loading'
+  submitSelector?: string;  // fallback when no submitter
+}
+```
+
+See [Loading State](/guides/loading-state/) for usage examples.
+
 ## Properties
 
 | Property | Type | Description |
@@ -76,7 +95,11 @@ form.on('field:change', (detail) => {
 
 // Form events receive FormEventDetail
 form.on('form:submit', (detail) => {
-  detail.state;     // FormState
+  detail.state;     // FormState (isSubmitting is true)
+});
+
+form.on('form:loading', (detail) => {
+  detail.state.isSubmitting; // true at start, false at end
 });
 
 // once() fires only once then auto-removes
@@ -123,8 +146,9 @@ interface FormSubmitContext {
 
   fallbackToNative(): void;
   applyValidationErrors(errors: Record<string, string[]>): void;
-  nextStep(state: string): void;
   redirect(url: string): void;
   finish(html?: string): void;
 }
 ```
+
+The generic `finish()` action destroys the controller and optionally replaces the form element. The TYPO3 layer handles finish/unmount separately via `unmount` — see [TYPO3 Setup](/guides/typo3-setup/).

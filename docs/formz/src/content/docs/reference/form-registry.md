@@ -20,7 +20,7 @@ formRegistry.init(
   submitFn: FormSubmitFunction,
   root?: ParentNode,           // default: document
   formSelector?: string,       // default: 'form[id]'
-  controllerOptions?: FormControllerOptions
+  controllerOptions?: FormControllerOptions  // fieldSelector, loadingState, onLoadingStateChange
 ): void
 ```
 

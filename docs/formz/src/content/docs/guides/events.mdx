@@ -38,7 +38,8 @@ form.once('form:valid', (detail) => {
 | `field:invalid` | `FieldEventDetail` | A field becomes invalid |
 | `field:added` | `FieldEventDetail` | A field is added to the DOM (mutation observer) |
 | `field:removed` | `FieldEventDetail` | A field is removed from the DOM |
-| `form:submit` | `FormEventDetail` | Form submit triggered (before validation) |
+| `form:submit` | `FormEventDetail` | Form submit triggered (before validation; `isSubmitting` is already `true`) |
+| `form:loading` | `FormEventDetail` | Loading state changed (`state.isSubmitting` toggled) |
 | `form:valid` | `FormEventDetail` | Form passes validation |
 | `form:invalid` | `FormEventDetail` | Form fails validation |
 | `form:reset` | `FormEventDetail` | Form is reset |
@@ -175,26 +176,37 @@ form.on('field:change', (detail) => {
 });
 ```
 
-## Example: Submit Button State
+## Example: Submit Button Loading State
 
-Disable the submit button while the form is submitting:
+Formz toggles `data-loading` on the submit button by default during submission. Style it with CSS:
+
+```css
+button[data-loading] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+```
+
+For custom behavior, use the `form:loading` event or `onLoadingStateChange`:
 
 ```typescript
 const form = formRegistry.get('contact');
-const btn = document.querySelector('#contact button[type="submit"]') as HTMLButtonElement;
 
-form.on('form:submit', () => {
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-});
-
-form.on('form:valid', () => {
-  btn.disabled = false;
-  btn.textContent = 'Send';
-});
-
-form.on('form:invalid', () => {
-  btn.disabled = false;
-  btn.textContent = 'Send';
+form.on('form:loading', (detail) => {
+  const btn = detail.formEl.querySelector('button[type="submit"]') as HTMLButtonElement;
+  btn.textContent = detail.state.isSubmitting ? 'Sending…' : 'Send';
 });
 ```
+
+Or pass options when registering:
+
+```typescript
+formRegistry.register(formEl, submitFn, {
+  loadingState: false, // disable default data-loading
+  onLoadingStateChange({ isSubmitting, submitter }) {
+    submitter?.classList.toggle('is-busy', isSubmitting);
+  },
+});
+```
+
+See [Loading State](/guides/loading-state/) for full details.
