@@ -6,7 +6,7 @@ description: API reference for the FormRegistry class.
 The `FormRegistry` manages all form controllers. Access via the exported `formRegistry` singleton.
 
 ```typescript
-import { formRegistry } from 'formz';
+import { formRegistry } from 'formlayer';
 ```
 
 ## Methods

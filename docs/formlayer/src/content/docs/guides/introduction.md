@@ -1,13 +1,13 @@
 ---
 title: Introduction
-description: What Formz is and how it works.
+description: What FormLayer is and how it works.
 ---
 
-Formz is a lightweight TypeScript library for progressively enhancing server-rendered HTML forms. It provides client-side validation, field plugins, an event system, and an optional TYPO3 integration layer — all without requiring React, Vue, or any framework.
+FormLayer is a lightweight TypeScript library for progressively enhancing server-rendered HTML forms. It provides client-side validation, field plugins, an event system, and an optional TYPO3 integration layer — all without requiring React, Vue, or any framework.
 
 ## How It Works
 
-Formz scans your HTML for forms and fields marked with `data-*` attributes, then wraps each one in a controller that handles:
+FormLayer scans your HTML for forms and fields marked with `data-*` attributes, then wraps each one in a controller that handles:
 
 - **Validation** — declarative rules via `data-validate` JSON, with 12 built-in validators
 - **State tracking** — dirty, touched, valid, submitting states per field and form
@@ -17,7 +17,7 @@ Formz scans your HTML for forms and fields marked with `data-*` attributes, then
 - **Events** — form-level and field-level event system for custom behavior
 - **Submit handling** — pluggable submit functions with native fallback
 
-Your server renders standard `<form>` HTML. Formz enhances it. If JavaScript fails to load, the native form still works.
+Your server renders standard `<form>` HTML. FormLayer enhances it. If JavaScript fails to load, the native form still works.
 
 ## Architecture
 
@@ -55,15 +55,15 @@ The `FormRegistry` is the entry point. It discovers forms in the DOM, creates co
 
 ### Progressive Enhancement
 
-Formz strips native HTML5 constraint attributes (`required`, `pattern`, `min`, `max`, etc.) and replaces them with its own validation pipeline. If JavaScript is disabled, browsers still enforce the native attributes. This is progressive enhancement — the baseline always works.
+FormLayer strips native HTML5 constraint attributes (`required`, `pattern`, `min`, `max`, etc.) and replaces them with its own validation pipeline. If JavaScript is disabled, browsers still enforce the native attributes. This is progressive enhancement — the baseline always works.
 
 ## Packages
 
-Formz is split into two layers:
+FormLayer is split into two layers:
 
 | Layer | Import | Purpose |
 |-------|--------|---------|
-| **Generic** | `import { formRegistry, initField } from 'formz'` | Framework-agnostic form/field controllers, validators, plugins, events, loading state |
-| **TYPO3** | `import { initTypo3Forms } from 'formz'` | One-call setup for TYPO3 EXT:form with AJAX submit, multistep remounting, and hooks |
+| **Generic** | `import { formRegistry, initField } from 'formlayer'` | Framework-agnostic form/field controllers, validators, plugins, events, loading state |
+| **TYPO3** | `import { initTypo3Forms } from 'formlayer'` | One-call setup for TYPO3 EXT:form with AJAX submit, multistep remounting, and hooks |
 
 The generic layer has zero TYPO3 knowledge. The TYPO3 layer is a thin wrapper that configures the generic library with TYPO3-specific defaults.

@@ -1,6 +1,6 @@
 ---
 title: Types & Events
-description: Complete type reference for all Formz interfaces.
+description: Complete type reference for all FormLayer interfaces.
 ---
 
 ## Event Types

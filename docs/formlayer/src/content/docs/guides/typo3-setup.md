@@ -3,14 +3,14 @@ title: TYPO3 Setup
 description: One-call setup for TYPO3 EXT:form with AJAX submit, plugins, and hooks.
 ---
 
-The TYPO3 integration layer wraps the generic Formz library with TYPO3-specific defaults. A single `initTypo3Forms()` call handles everything.
+The TYPO3 integration layer wraps the generic FormLayer library with TYPO3-specific defaults. A single `initTypo3Forms()` call handles everything.
 
 ## Basic Setup
 
 ### Frontend
 
 ```typescript
-import { initTypo3Forms } from 'formz';
+import { initTypo3Forms } from 'formlayer';
 
 const api = initTypo3Forms();
 ```

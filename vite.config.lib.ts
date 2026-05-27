@@ -7,9 +7,9 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/lib-entry.ts'),
       formats: ['es'],
-      fileName: 'formz',
+      fileName: 'formlayer',
     },
-    outDir: resolve(__dirname, 'docs/formz/public/formz'),
+    outDir: resolve(__dirname, 'docs/formlayer/public/formlayer'),
     emptyOutDir: true,
     rollupOptions: {
       external: ['air-datepicker', /^altcha/],

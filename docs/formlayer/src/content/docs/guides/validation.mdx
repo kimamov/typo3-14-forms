@@ -140,7 +140,7 @@ Validates uploaded file sizes. Supports units like `1K`, `5M`, `1G`.
 Register a custom validator before initializing forms:
 
 ```typescript
-import { formRegistry, registerDefaultValidators } from 'formz';
+import { formRegistry, registerDefaultValidators } from 'formlayer';
 
 registerDefaultValidators();
 
@@ -207,7 +207,7 @@ Async validators work with `runValidatorsAsync()` but the default `FieldControll
 Override the validation pipeline for a specific field using `FieldControllerOptions`:
 
 ```typescript
-import { initField } from 'formz';
+import { initField } from 'formlayer';
 
 const ctrl = initField(document.getElementById('confirm-password')!, {
   validate(value, rules, defaultValidate) {

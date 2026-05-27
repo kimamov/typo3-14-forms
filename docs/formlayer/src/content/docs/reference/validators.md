@@ -6,7 +6,7 @@ description: API reference for the validator system.
 ## Registration
 
 ```typescript
-import { registerDefaultValidators, registerValidator, formRegistry } from 'formz';
+import { registerDefaultValidators, registerValidator, formRegistry } from 'formlayer';
 
 // Register all 12 built-in validators at once
 registerDefaultValidators();
@@ -82,7 +82,7 @@ Used in HTML as a JSON array:
 ## Running Validators Programmatically
 
 ```typescript
-import { runValidators, runValidatorsAsync } from 'formz/forms/validators';
+import { runValidators, runValidatorsAsync } from 'formlayer/forms/validators';
 
 // Synchronous (skips async validators with a warning)
 const results = runValidators(rules, value);

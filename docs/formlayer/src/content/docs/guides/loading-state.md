@@ -3,7 +3,7 @@ title: Loading State
 description: Reflect form submission loading on the submit button with built-in defaults and hooks.
 ---
 
-When a form is submitted, Formz tracks `isSubmitting` on the form state. By default, the clicked submit button gets a `data-loading` attribute while submission is in progress.
+When a form is submitted, FormLayer tracks `isSubmitting` on the form state. By default, the clicked submit button gets a `data-loading` attribute while submission is in progress.
 
 This covers client-side validation, the async submit function, and any network round-trip — until the submit handler completes or the controller is destroyed.
 
@@ -28,14 +28,14 @@ button[data-loading]::after {
 }
 ```
 
-If no submitter is available (e.g. programmatic `form.submit()`), Formz falls back to the first submit button in the form.
+If no submitter is available (e.g. programmatic `form.submit()`), FormLayer falls back to the first submit button in the form.
 
 ## FormController Options
 
 Pass options when registering a form:
 
 ```typescript
-import { formRegistry } from 'formz';
+import { formRegistry } from 'formlayer';
 
 formRegistry.register(formEl, submitFn, {
   loadingState: {

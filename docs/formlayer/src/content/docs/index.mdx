@@ -1,5 +1,5 @@
 ---
-title: Formz
+title: FormLayer
 description: A lightweight, framework-free form library that progressively enhances server-rendered forms.
 template: splash
 hero:
@@ -16,11 +16,11 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Why Formz?
+## Why FormLayer?
 
 <CardGrid>
   <Card title="Progressive Enhancement" icon="rocket">
-    Works with any server-rendered HTML form. Your forms work without JavaScript — Formz adds validation, plugins, and AJAX submit on top.
+    Works with any server-rendered HTML form. Your forms work without JavaScript — FormLayer adds validation, plugins, and AJAX submit on top.
   </Card>
   <Card title="Framework-Free" icon="puzzle">
     No React, Vue, or Angular dependency. Pure TypeScript that enhances standard `<form>` elements with `data-*` attributes.
@@ -54,8 +54,8 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ```
 
 ```typescript
-import { formRegistry } from 'formz';
-import { registerDefaultValidators } from 'formz';
+import { formRegistry } from 'formlayer';
+import { registerDefaultValidators } from 'formlayer';
 
 registerDefaultValidators();
 formRegistry.init(async (ctx) => {

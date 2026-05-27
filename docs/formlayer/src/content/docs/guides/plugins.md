@@ -7,7 +7,7 @@ Plugins enhance individual fields or entire forms. Field plugins transform the D
 
 ## Field Plugins
 
-A field plugin is activated by the `data-field-type` attribute on the field wrapper. Formz lazy-loads the matching plugin from the registry.
+A field plugin is activated by the `data-field-type` attribute on the field wrapper. FormLayer lazy-loads the matching plugin from the registry.
 
 ### Combobox
 
@@ -100,7 +100,7 @@ When `accountType` is not `"business"`, the `companyName` and `taxId` fields are
 Plugins are registered globally before form initialization:
 
 ```typescript
-import { registerPlugin, formRegistry } from 'formz';
+import { registerPlugin, formRegistry } from 'formlayer';
 
 // Field plugin (lazy-loaded via dynamic import)
 registerPlugin('combobox', () => import('./plugins/combobox'));
@@ -113,7 +113,7 @@ formRegistry.registerFormPlugin(() => import('./plugins/my-form-plugin'));
 With TYPO3, combobox/datepicker/client-variants are registered automatically. Add extras via options:
 
 ```typescript
-import { initTypo3Forms } from 'formz';
+import { initTypo3Forms } from 'formlayer';
 
 initTypo3Forms({
   additionalFieldPlugins: {
@@ -131,7 +131,7 @@ initTypo3Forms({
 A field plugin implements the `FieldPlugin` interface:
 
 ```typescript
-import type { FieldPlugin, FieldPluginHost } from 'formz';
+import type { FieldPlugin, FieldPluginHost } from 'formlayer';
 
 export default class TogglePlugin implements FieldPlugin {
   private host!: FieldPluginHost;
@@ -181,7 +181,7 @@ registerPlugin('toggle', () => import('./plugins/toggle'));
 Form plugins implement the `FormPlugin` interface and receive `FormPluginHost`:
 
 ```typescript
-import type { FormPlugin, FormPluginHost } from 'formz';
+import type { FormPlugin, FormPluginHost } from 'formlayer';
 
 export default class FormAnalyticsPlugin implements FormPlugin {
   private host!: FormPluginHost;

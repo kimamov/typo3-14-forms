@@ -3,7 +3,7 @@ title: Multistep Forms
 description: TYPO3 multistep form support with AJAX page transitions, summary steps, and form remounting.
 ---
 
-TYPO3 EXT:form supports multistep (multi-page) forms. The Formz TYPO3 layer handles step transitions via AJAX without full page reloads.
+TYPO3 EXT:form supports multistep (multi-page) forms. The FormLayer TYPO3 layer handles step transitions via AJAX without full page reloads.
 
 ## How It Works
 
@@ -158,7 +158,7 @@ initTypo3Forms({
 
 ## Loading State During Transitions
 
-Formz toggles `data-loading` on the submit button automatically during submission. No manual hooks are required for basic loading UI:
+FormLayer toggles `data-loading` on the submit button automatically during submission. No manual hooks are required for basic loading UI:
 
 ```css
 .t3-form button[data-loading] {

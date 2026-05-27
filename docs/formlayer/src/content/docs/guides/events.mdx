@@ -5,14 +5,14 @@ description: Form-level, field-level, and registry events for reacting to user i
 
 import FormPreview from '../../../components/FormPreview.astro';
 
-Formz provides a three-layer event system: **registry events** for form lifecycle, **form events** for field and form state changes, and **field events** for individual field changes.
+FormLayer provides a three-layer event system: **registry events** for form lifecycle, **form events** for field and form state changes, and **field events** for individual field changes.
 
 ## Form Events
 
 Subscribe to events on a form controller via `on()`, `once()`, and `off()`:
 
 ```typescript
-import { formRegistry } from 'formz';
+import { formRegistry } from 'formlayer';
 
 const form = formRegistry.get('contact');
 
@@ -64,7 +64,7 @@ interface FormEventDetail {
 Individual fields have their own event system with `on()`, `once()`, and `off()`:
 
 ```typescript
-import { initField } from 'formz';
+import { initField } from 'formlayer';
 
 const ctrl = initField(document.getElementById('email-field')!);
 
@@ -94,7 +94,7 @@ ctrl.on('invalid', (state) => {
 React to forms being registered or unregistered:
 
 ```typescript
-import { formRegistry } from 'formz';
+import { formRegistry } from 'formlayer';
 
 formRegistry.on('form:registered', ({ formId }) => {
   console.log(`Form "${formId}" registered`);
@@ -178,7 +178,7 @@ form.on('field:change', (detail) => {
 
 ## Example: Submit Button Loading State
 
-Formz toggles `data-loading` on the submit button by default during submission. Style it with CSS:
+FormLayer toggles `data-loading` on the submit button by default during submission. Style it with CSS:
 
 ```css
 button[data-loading] {

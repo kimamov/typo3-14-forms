@@ -536,7 +536,7 @@ function k(e) {
 }
 //#endregion
 //#region src/forms/form-controller.ts
-var A = class {
+var A = "button[type=\"submit\"], input[type=\"submit\"]", j = "data-loading", M = class {
 	id;
 	formEl;
 	fieldSelector;
@@ -546,10 +546,13 @@ var A = class {
 	observer;
 	abortController = new AbortController();
 	submitFn;
+	loadingStateOptions;
+	onLoadingStateChange;
 	_isSubmitting = !1;
 	_allowSubmit = !1;
+	_activeSubmitter = null;
 	constructor(e, t, r) {
-		this.formEl = e, this.id = e.id, this.submitFn = t, this.fieldSelector = r?.fieldSelector ?? n.formField, this.formEl.setAttribute("novalidate", ""), this.discoverFields(), this.observer = this.createObserver(), this.bindSubmit();
+		this.formEl = e, this.id = e.id, this.submitFn = t, this.fieldSelector = r?.fieldSelector ?? n.formField, this.loadingStateOptions = r?.loadingState ?? {}, this.onLoadingStateChange = r?.onLoadingStateChange, this.formEl.setAttribute("novalidate", ""), this.discoverFields(), this.observer = this.createObserver(), this.bindSubmit();
 	}
 	getField(e) {
 		return this.fields.get(e)?.state;
@@ -582,7 +585,7 @@ var A = class {
 		});
 	}
 	destroy() {
-		this.abortController.abort(), this.observer.disconnect();
+		this._isSubmitting && this.setSubmitting(!1, this._activeSubmitter), this.abortController.abort(), this.observer.disconnect();
 		for (let e of this.formPlugins) e.destroy();
 		this.formPlugins.length = 0;
 		for (let e of this.fields.values()) e.destroy();
@@ -683,16 +686,18 @@ var A = class {
 				this._allowSubmit = !1;
 				return;
 			}
-			e.preventDefault(), this._isSubmitting = !0, this.eventBus.emit("form:submit", {
+			e.preventDefault();
+			let t = e.submitter instanceof HTMLElement ? e.submitter : null;
+			this.setSubmitting(!0, t), this.eventBus.emit("form:submit", {
 				formId: this.id,
 				state: this.getState()
 			});
 			try {
 				if (await this.validate()) {
-					let t = e.submitter, n = new FormData(this.formEl, t);
+					let e = new FormData(this.formEl, t ?? void 0);
 					await this.submitFn({
 						formEl: this.formEl,
-						formData: n,
+						formData: e,
 						submitter: t,
 						signal: this.abortController.signal,
 						fallbackToNative: () => {
@@ -700,12 +705,6 @@ var A = class {
 						},
 						applyValidationErrors: (e) => {
 							this.applyServerErrors(e);
-						},
-						nextStep: (e) => {
-							this.updateStateHiddenField(e), this.eventBus.emit("form:valid", {
-								formId: this.id,
-								state: this.getState()
-							});
 						},
 						redirect: (e) => {
 							window.location.href = e;
@@ -716,7 +715,7 @@ var A = class {
 					});
 				}
 			} finally {
-				this._isSubmitting = !1;
+				this.setSubmitting(!1, t);
 			}
 		}, { signal: e });
 	}
@@ -733,10 +732,29 @@ var A = class {
 		};
 		this.eventBus.emit("form:invalid", n);
 	}
-	updateStateHiddenField(e) {
-		if (!e) return;
-		let t = this.formEl.querySelector("input[name$=\"[__state]\"]");
-		t && (t.value = e);
+	applyDefaultLoadingState(e, t) {
+		if (this.loadingStateOptions === !1) return;
+		let n = this.loadingStateOptions.attribute ?? j, r = this.resolveSubmitter(e);
+		r && (t ? r.setAttribute(n, "") : r.removeAttribute(n));
+	}
+	resolveSubmitter(e) {
+		if (e instanceof HTMLElement && this.formEl.contains(e)) return e;
+		let t = this.loadingStateOptions === !1 ? A : this.loadingStateOptions.submitSelector ?? A;
+		return this.formEl.querySelector(t);
+	}
+	setSubmitting(e, t) {
+		this._isSubmitting = e, this._activeSubmitter = e ? t : null, this.applyDefaultLoadingState(t, e);
+		let n = {
+			formId: this.id,
+			isSubmitting: e,
+			submitter: t,
+			formEl: this.formEl,
+			state: this.getState()
+		};
+		this.onLoadingStateChange?.(n), this.eventBus.emit("form:loading", {
+			formId: this.id,
+			state: n.state
+		});
 	}
 	computeIsValid() {
 		for (let e of this.fields.values()) if (!e.state.isValid) return !1;
@@ -746,7 +764,7 @@ var A = class {
 		for (let e of this.fields.values()) if (e.state.isDirty) return !0;
 		return !1;
 	}
-}, j = class {
+}, N = class {
 	forms = /* @__PURE__ */ new Map();
 	formPluginFactories = [];
 	eventBus = new w();
@@ -756,7 +774,7 @@ var A = class {
 	}
 	register(e, t, n) {
 		if (this.forms.has(e.id)) return this.forms.get(e.id);
-		let r = new A(e, t, n);
+		let r = new M(e, t, n);
 		return this.forms.set(e.id, r), this.loadFormPlugins(r), this.eventBus.emit("form:registered", { formId: e.id }), r;
 	}
 	loadFormPlugins(e) {
@@ -798,11 +816,11 @@ var A = class {
 	registerFormPlugin(e) {
 		this._initialized && console.warn("[FormsModule] registerFormPlugin called after init — new plugin will only apply to forms registered after this point"), this.formPluginFactories.push(e);
 	}
-}, M = new j();
-typeof window < "u" && (window.__FormsModule = M);
+}, P = new N();
+typeof window < "u" && (window.__FormsModule = P);
 //#endregion
 //#region src/forms/plugins/client-variants/expression-parser.ts
-var N = {
+var F = {
 	String: 0,
 	Number: 1,
 	Boolean: 2,
@@ -819,10 +837,10 @@ var N = {
 	Comma: 13,
 	EOF: 14
 };
-function P(e) {
+function I(e) {
 	return !e || !/[a-zA-Z0-9_]/.test(e);
 }
-function F(e) {
+function L(e) {
 	let t = [], n = 0;
 	for (; n < e.length;) {
 		let r = e[n];
@@ -832,112 +850,112 @@ function F(e) {
 		}
 		if (r === "(") {
 			t.push({
-				type: N.LParen,
+				type: F.LParen,
 				value: "("
 			}), n++;
 			continue;
 		}
 		if (r === ")") {
 			t.push({
-				type: N.RParen,
+				type: F.RParen,
 				value: ")"
 			}), n++;
 			continue;
 		}
 		if (r === "[") {
 			t.push({
-				type: N.LBracket,
+				type: F.LBracket,
 				value: "["
 			}), n++;
 			continue;
 		}
 		if (r === "]") {
 			t.push({
-				type: N.RBracket,
+				type: F.RBracket,
 				value: "]"
 			}), n++;
 			continue;
 		}
 		if (r === ",") {
 			t.push({
-				type: N.Comma,
+				type: F.Comma,
 				value: ","
 			}), n++;
 			continue;
 		}
 		if (r === "!" && e[n + 1] === "=" && e[n + 2] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "!=="
 			}), n += 3;
 			continue;
 		}
 		if (r === "!" && e[n + 1] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "!="
 			}), n += 2;
 			continue;
 		}
 		if (r === "!") {
 			t.push({
-				type: N.Not,
+				type: F.Not,
 				value: "!"
 			}), n++;
 			continue;
 		}
 		if (r === "=" && e[n + 1] === "=" && e[n + 2] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "==="
 			}), n += 3;
 			continue;
 		}
 		if (r === "=" && e[n + 1] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "=="
 			}), n += 2;
 			continue;
 		}
 		if (r === ">" && e[n + 1] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: ">="
 			}), n += 2;
 			continue;
 		}
 		if (r === "<" && e[n + 1] === "=") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "<="
 			}), n += 2;
 			continue;
 		}
 		if (r === ">") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: ">"
 			}), n++;
 			continue;
 		}
 		if (r === "<") {
 			t.push({
-				type: N.Operator,
+				type: F.Operator,
 				value: "<"
 			}), n++;
 			continue;
 		}
 		if (r === "&" && e[n + 1] === "&") {
 			t.push({
-				type: N.And,
+				type: F.And,
 				value: "&&"
 			}), n += 2;
 			continue;
 		}
 		if (r === "|" && e[n + 1] === "|") {
 			t.push({
-				type: N.Or,
+				type: F.Or,
 				value: "||"
 			}), n += 2;
 			continue;
@@ -948,7 +966,7 @@ function F(e) {
 			let a = "";
 			for (; n < e.length && e[n] !== i;) e[n] === "\\" ? (n++, a += e[n] ?? "") : a += e[n], n++;
 			n++, t.push({
-				type: N.String,
+				type: F.String,
 				value: a
 			});
 			continue;
@@ -957,7 +975,7 @@ function F(e) {
 			let i = "";
 			for (r === "-" && (i = "-", n++); n < e.length && /[0-9.]/.test(e[n]);) i += e[n], n++;
 			t.push({
-				type: N.Number,
+				type: F.Number,
 				value: i
 			});
 			continue;
@@ -972,49 +990,49 @@ function F(e) {
 			for (; n < e.length && e[n] !== r;) e[n] === "\\" ? (n++, i += e[n] ?? "") : i += e[n], n++;
 			for (n++; n < e.length && e[n] !== ")";) n++;
 			n++, t.push({
-				type: N.FormValue,
+				type: F.FormValue,
 				value: i
 			});
 			continue;
 		}
-		if (e.startsWith("and", n) && P(e[n + 3])) {
+		if (e.startsWith("and", n) && I(e[n + 3])) {
 			t.push({
-				type: N.And,
+				type: F.And,
 				value: "and"
 			}), n += 3;
 			continue;
 		}
-		if (e.startsWith("or", n) && P(e[n + 2])) {
+		if (e.startsWith("or", n) && I(e[n + 2])) {
 			t.push({
-				type: N.Or,
+				type: F.Or,
 				value: "or"
 			}), n += 2;
 			continue;
 		}
-		if (e.startsWith("not", n) && P(e[n + 3])) {
+		if (e.startsWith("not", n) && I(e[n + 3])) {
 			t.push({
-				type: N.Not,
+				type: F.Not,
 				value: "not"
 			}), n += 3;
 			continue;
 		}
-		if (e.startsWith("in", n) && P(e[n + 2])) {
+		if (e.startsWith("in", n) && I(e[n + 2])) {
 			t.push({
-				type: N.In,
+				type: F.In,
 				value: "in"
 			}), n += 2;
 			continue;
 		}
-		if (e.startsWith("true", n) && P(e[n + 4])) {
+		if (e.startsWith("true", n) && I(e[n + 4])) {
 			t.push({
-				type: N.Boolean,
+				type: F.Boolean,
 				value: "true"
 			}), n += 4;
 			continue;
 		}
-		if (e.startsWith("false", n) && P(e[n + 5])) {
+		if (e.startsWith("false", n) && I(e[n + 5])) {
 			t.push({
-				type: N.Boolean,
+				type: F.Boolean,
 				value: "false"
 			}), n += 5;
 			continue;
@@ -1022,11 +1040,11 @@ function F(e) {
 		throw Error(`Unexpected character "${r}" at position ${n} in expression`);
 	}
 	return t.push({
-		type: N.EOF,
+		type: F.EOF,
 		value: ""
 	}), t;
 }
-var I = class {
+var R = class {
 	tokens;
 	pos = 0;
 	resolver;
@@ -1035,7 +1053,7 @@ var I = class {
 	}
 	parse() {
 		let e = this.parseOr();
-		if (this.current().type !== N.EOF) throw Error(`Unexpected token "${this.current().value}" after expression`);
+		if (this.current().type !== F.EOF) throw Error(`Unexpected token "${this.current().value}" after expression`);
 		return e;
 	}
 	current() {
@@ -1046,7 +1064,7 @@ var I = class {
 	}
 	parseOr() {
 		let e = this.parseAnd();
-		for (; this.current().type === N.Or;) {
+		for (; this.current().type === F.Or;) {
 			this.advance();
 			let t = this.parseAnd();
 			e = !!e || !!t;
@@ -1055,7 +1073,7 @@ var I = class {
 	}
 	parseAnd() {
 		let e = this.parseIn();
-		for (; this.current().type === N.And;) {
+		for (; this.current().type === F.And;) {
 			this.advance();
 			let t = this.parseIn();
 			e = !!e && !!t;
@@ -1064,7 +1082,7 @@ var I = class {
 	}
 	parseIn() {
 		let e = this.parseComparison();
-		if (this.current().type === N.In) {
+		if (this.current().type === F.In) {
 			this.advance();
 			let t = this.parseArray();
 			if (!Array.isArray(t)) throw Error("Right side of \"in\" must be an array");
@@ -1074,38 +1092,38 @@ var I = class {
 	}
 	parseComparison() {
 		let e = this.parseUnary();
-		if (this.current().type === N.Operator) {
+		if (this.current().type === F.Operator) {
 			let t = this.advance().value, n = this.parseUnary();
 			return this.compare(e, t, n);
 		}
 		return e;
 	}
 	parseUnary() {
-		return this.current().type === N.Not ? (this.advance(), !this.parseUnary()) : this.parsePrimary();
+		return this.current().type === F.Not ? (this.advance(), !this.parseUnary()) : this.parsePrimary();
 	}
 	parsePrimary() {
 		let e = this.current();
 		switch (e.type) {
-			case N.String: return this.advance(), e.value;
-			case N.Number: return this.advance(), parseFloat(e.value);
-			case N.Boolean: return this.advance(), e.value === "true";
-			case N.FormValue: return this.advance(), this.resolver(e.value);
-			case N.LParen: {
+			case F.String: return this.advance(), e.value;
+			case F.Number: return this.advance(), parseFloat(e.value);
+			case F.Boolean: return this.advance(), e.value === "true";
+			case F.FormValue: return this.advance(), this.resolver(e.value);
+			case F.LParen: {
 				this.advance();
 				let e = this.parseOr();
-				if (this.current().type !== N.RParen) throw Error("Expected closing parenthesis");
+				if (this.current().type !== F.RParen) throw Error("Expected closing parenthesis");
 				return this.advance(), e;
 			}
-			case N.LBracket: return this.parseArray();
+			case F.LBracket: return this.parseArray();
 			default: throw Error(`Unexpected token "${e.value}" (type ${e.type})`);
 		}
 	}
 	parseArray() {
-		if (this.current().type !== N.LBracket) throw Error("Expected \"[\" for array literal");
+		if (this.current().type !== F.LBracket) throw Error("Expected \"[\" for array literal");
 		this.advance();
 		let e = [];
-		if (this.current().type !== N.RBracket) for (e.push(this.parsePrimary()); this.current().type === N.Comma;) this.advance(), e.push(this.parsePrimary());
-		if (this.current().type !== N.RBracket) throw Error("Expected \"]\" to close array literal");
+		if (this.current().type !== F.RBracket) for (e.push(this.parsePrimary()); this.current().type === F.Comma;) this.advance(), e.push(this.parsePrimary());
+		if (this.current().type !== F.RBracket) throw Error("Expected \"]\" to close array literal");
 		return this.advance(), e;
 	}
 	compare(e, t, n) {
@@ -1122,12 +1140,12 @@ var I = class {
 		}
 	}
 };
-function L(e, t) {
-	return !!new I(F(e), t).parse();
+function z(e, t) {
+	return !!new R(L(e), t).parse();
 }
 //#endregion
 //#region src/forms/plugins/client-variants/client-variants-plugin.ts
-var R = /* @__PURE__ */ e({ default: () => B }), z = "__clientVariantsDisabled", B = class {
+var B = /* @__PURE__ */ e({ default: () => H }), V = "__clientVariantsDisabled", H = class {
 	host;
 	formEl;
 	configs = [];
@@ -1159,8 +1177,8 @@ var R = /* @__PURE__ */ e({ default: () => B }), z = "__clientVariantsDisabled",
 		return e;
 	}
 	createDisabledFieldsInput() {
-		let e = this.formEl.querySelector(`input[name="${z}"]`);
-		return e || (e = document.createElement("input"), e.type = "hidden", e.name = z, this.formEl.appendChild(e)), e;
+		let e = this.formEl.querySelector(`input[name="${V}"]`);
+		return e || (e = document.createElement("input"), e.type = "hidden", e.name = V, this.formEl.appendChild(e)), e;
 	}
 	evaluate() {
 		let e = [];
@@ -1172,7 +1190,7 @@ var R = /* @__PURE__ */ e({ default: () => B }), z = "__clientVariantsDisabled",
 	}
 	evaluateVariants(e) {
 		for (let t of e) try {
-			if (L(t.condition, (e) => this.host.getFieldValue(e) ?? "") && t.enabled === !0) return !0;
+			if (z(t.condition, (e) => this.host.getFieldValue(e) ?? "") && t.enabled === !0) return !0;
 		} catch (e) {
 			console.warn("[FormsModule] Error evaluating variant condition:", e);
 		}
@@ -1181,64 +1199,71 @@ var R = /* @__PURE__ */ e({ default: () => B }), z = "__clientVariantsDisabled",
 };
 //#endregion
 //#region src/typo3/submit.ts
-function V(e) {
-	return async (t) => {
-		let { formEl: n, formData: r, signal: i, fallbackToNative: a, applyValidationErrors: o, nextStep: s, redirect: c, finish: l } = t;
-		if (e?.onBeforeSubmit?.(t) === !1) return;
-		let u;
+function U(e, t, n) {
+	let r = e.querySelector(t);
+	r && (r.value = n);
+}
+function W(e, t) {
+	return async (n) => {
+		let { formEl: r, formData: i, signal: a, fallbackToNative: o, applyValidationErrors: s, redirect: c } = n;
+		if (e?.onBeforeSubmit?.(n) === !1) return;
+		let l;
 		try {
-			u = await fetch(n.action, {
+			l = await fetch(r.action, {
 				method: "POST",
 				headers: { "X-Form-Ajax": "1" },
-				body: r,
-				signal: i
+				body: i,
+				signal: a
 			});
 		} catch (t) {
-			t.name !== "AbortError" && (console.warn("[Typo3Forms] AJAX submit failed:", t), e?.onSubmitError?.(t, n), a());
+			t.name !== "AbortError" && (console.warn("[Typo3Forms] AJAX submit failed:", t), e?.onSubmitError?.(t, r), o());
 			return;
 		}
-		if (!u.ok) {
-			let t = /* @__PURE__ */ Error(`Server responded with ${u.status}`);
-			console.warn(`[Typo3Forms] ${t.message}, falling back to normal submit`), e?.onSubmitError?.(t, n), a();
+		if (!l.ok) {
+			let t = /* @__PURE__ */ Error(`Server responded with ${l.status}`);
+			console.warn(`[Typo3Forms] ${t.message}, falling back to normal submit`), e?.onSubmitError?.(t, r), o();
 			return;
 		}
-		let d;
+		let u;
 		try {
-			d = await u.json();
+			u = await l.json();
 		} catch {
-			console.warn("[Typo3Forms] Invalid JSON response, falling back to normal submit"), e?.onSubmitError?.(/* @__PURE__ */ Error("Invalid JSON response"), n), a();
+			console.warn("[Typo3Forms] Invalid JSON response, falling back to normal submit"), e?.onSubmitError?.(/* @__PURE__ */ Error("Invalid JSON response"), r), o();
 			return;
 		}
-		if (e?.onAfterSubmit?.(d, n), !d.valid) {
-			o(d.errors), e?.onValidationError?.(d.errors, n);
+		if (e?.onAfterSubmit?.(u, r), !u.valid) {
+			u.state && U(r, "input[name$=\"[__state]\"]", u.state), s(u.errors), e?.onValidationError?.(u.errors, r);
 			return;
 		}
-		if (d.finished) {
-			if (e?.onFormFinished?.(d, n), d.redirect) {
-				c(d.redirect);
+		if (u.finished) {
+			if (e?.onFormFinished?.(u, r), u.redirect) {
+				c(u.redirect);
 				return;
 			}
-			l(d.message ?? void 0);
+			t?.unmount?.(r), u.message && (r.outerHTML = u.message);
 			return;
 		}
-		d.html && (n.innerHTML = d.html), s(d.state), e?.onStepChange?.(d.page, n);
+		if (u.html && t?.remount) {
+			let n = t.remount(r, u.html);
+			e?.onStepChange?.(u.page, n ?? r);
+		} else u.state && U(r, "input[name$=\"[__state]\"]", u.state), e?.onStepChange?.(u.page, r);
 	};
 }
 //#endregion
 //#region src/forms/init-field.ts
-function H(e, t) {
-	let { plugin: n, fieldOptions: r } = W(t), i = new C(q(e), r);
-	return G(i, n ?? i.fieldType), i;
+function G(e, t) {
+	let { plugin: n, fieldOptions: r } = q(t), i = new C(X(e), r);
+	return J(i, n ?? i.fieldType), i;
 }
-function U(e) {
+function K(e) {
 	return typeof e == "string" || typeof e == "function" ? !0 : typeof e == "object" && !!e && "init" in e && "destroy" in e;
 }
-function W(e) {
+function q(e) {
 	if (e === void 0) return {
 		plugin: void 0,
 		fieldOptions: void 0
 	};
-	if (U(e)) return {
+	if (K(e)) return {
 		plugin: e,
 		fieldOptions: void 0
 	};
@@ -1248,7 +1273,7 @@ function W(e) {
 		fieldOptions: Object.keys(n).length > 0 ? n : void 0
 	};
 }
-function G(e, t) {
+function J(e, t) {
 	if (t) {
 		if (typeof t == "string") {
 			let n = O(t);
@@ -1265,10 +1290,10 @@ function G(e, t) {
 		e.attachPlugin(t);
 	}
 }
-var K = "input, select, textarea";
-function q(e) {
+var Y = "input, select, textarea";
+function X(e) {
 	if (e.hasAttribute("data-form-field")) return e;
-	if (e.matches(K)) {
+	if (e.matches(Y)) {
 		let t = e.closest("[data-form-field]");
 		if (t) return t;
 	}
@@ -1276,33 +1301,45 @@ function q(e) {
 }
 //#endregion
 //#region src/typo3/index.ts
-var J = !1;
-function Y(e) {
-	if (J) return console.warn("[Typo3Forms] initTypo3Forms() called more than once — ignoring duplicate call"), {
-		registry: M,
+var Z = !1;
+function Q(e) {
+	if (Z) return console.warn("[Typo3Forms] initTypo3Forms() called more than once — ignoring duplicate call"), {
+		registry: P,
 		destroy() {}
 	};
-	J = !0, e?.disableDefaultValidators || y();
-	for (let t of e?.additionalValidators ?? []) M.registerValidator(t);
-	E("combobox", () => import("./combobox-DljG2TLr.js")), E("datepicker", () => import("./datepicker-BGS6ff8f.js")), M.registerFormPlugin(() => Promise.resolve().then(() => R));
+	Z = !0, e?.disableDefaultValidators || y();
+	for (let t of e?.additionalValidators ?? []) P.registerValidator(t);
+	E("combobox", () => import("./combobox-DljG2TLr.js")), E("datepicker", () => import("./datepicker-BGS6ff8f.js")), E("altcha", () => import("./altcha-BjRzkH7L.js")), P.registerFormPlugin(() => Promise.resolve().then(() => B));
 	for (let [t, n] of Object.entries(e?.additionalFieldPlugins ?? {})) E(t, n);
-	for (let t of e?.additionalFormPlugins ?? []) M.registerFormPlugin(t);
-	let t = e?.onSubmit ?? V(e?.hooks), n = null;
+	for (let t of e?.additionalFormPlugins ?? []) P.registerFormPlugin(t);
+	let t = e?.fieldSelector ? { fieldSelector: e.fieldSelector } : void 0, n = (e) => {
+		P.unregister(e.id);
+	}, r = (e, n) => {
+		let r = e.id;
+		P.unregister(r), e.outerHTML = n;
+		let a = document.getElementById(r);
+		return a && P.register(a, i, t), a;
+	}, i;
+	i = e?.onSubmit ?? W(e?.hooks, {
+		remount: r,
+		unmount: n
+	});
+	let a = null;
 	if (e?.hooks?.onFormRegistered) {
 		let t = e.hooks.onFormRegistered;
-		n = ({ formId: e }) => {
-			let n = M.get(e);
+		a = ({ formId: e }) => {
+			let n = P.get(e);
 			n && t(n);
-		}, M.on("form:registered", n);
+		}, P.on("form:registered", a);
 	}
-	let r = e?.formSelector, i = e?.fieldSelector ? { fieldSelector: e.fieldSelector } : void 0, a = () => M.init(t, document, r, i), o = null;
-	return document.readyState === "loading" ? (o = a, document.addEventListener("DOMContentLoaded", o)) : a(), {
-		registry: M,
+	let o = e?.formSelector, s = () => P.init(i, document, o, t), c = null;
+	return document.readyState === "loading" ? (c = s, document.addEventListener("DOMContentLoaded", c)) : s(), {
+		registry: P,
 		destroy() {
-			for (let [e] of M.getAll()) M.unregister(e);
-			n && M.off("form:registered", n), o && document.removeEventListener("DOMContentLoaded", o), J = !1;
+			for (let [e] of P.getAll()) P.unregister(e);
+			a && P.off("form:registered", a), c && document.removeEventListener("DOMContentLoaded", c), Z = !1;
 		}
 	};
 }
 //#endregion
-export { B as ClientVariantsPlugin, j as FormRegistry, V as createTypo3Submit, M as formRegistry, k as hasPlugin, H as initField, Y as initTypo3Forms, y as registerDefaultValidators, E as registerPlugin, b as registerValidator, D as unregisterPlugin };
+export { H as ClientVariantsPlugin, N as FormRegistry, W as createTypo3Submit, P as formRegistry, k as hasPlugin, G as initField, Q as initTypo3Forms, y as registerDefaultValidators, E as registerPlugin, b as registerValidator, D as unregisterPlugin };
