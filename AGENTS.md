@@ -20,8 +20,9 @@ This monorepo contains two related products:
 ### Frontend (FormLayer)
 
 - **TypeScript** (~6.x), **Vite** 8, **Vitest** + jsdom
-- Optional plugin deps: `air-datepicker`, `altcha`
-- Built as ESM library: `formlayer.js` / `formlayer.css`
+- **Zero third-party runtime deps** in core `formlayer`
+- Optional plugins: `@formlayer/plugin-datepicker` (air-datepicker), `@formlayer/plugin-altcha` (altcha)
+- Built as preserved ESM modules for tree-shaking
 - TYPO3 dev integration via `vite-plugin-typo3`
 
 ### Backend (T13 Forms)
@@ -41,30 +42,26 @@ This monorepo contains two related products:
 ## Repository layout
 
 ```
-src/
-  forms/              # Generic FormLayer (framework-agnostic)
-    form-controller.ts
-    field-controller.ts
-    registry.ts
-    validators/
-    plugins/
-    submit/
-  typo3/              # TYPO3 integration layer (composition, not fork)
-    index.ts          # initTypo3Forms()
-    submit.ts         # createTypo3Submit(), multistep remount/unmount
-    plugins/
-  index.ts            # Public barrel export
-  main.ts             # TYPO3 entry (calls initTypo3Forms)
-  lib-entry.ts        # Library build entry
+formlayer/            # Standalone npm monorepo (publishable)
+  src/                # Core FormLayer (no third-party deps)
+  packages/
+    plugin-datepicker/  # @formlayer/plugin-datepicker
+    plugin-altcha/      # @formlayer/plugin-altcha
+  tests/
+  docs/
 
-tests/                # Vitest tests for generic layer
+src/                  # Monorepo copy used by TYPO3 site (vite-plugin-typo3)
+  forms/              # Generic FormLayer (framework-agnostic)
+  typo3/              # TYPO3 integration layer (composition, not fork)
+
+tests/                # Vitest tests for generic layer (monorepo)
 
 packages/sitepackage/ # TYPO3 extension (T13 Forms)
   Classes/            # Middleware, listeners, ViewHelpers, services
   Resources/          # Fluid templates, JS modules, form definitions
   Configuration/      # Middleware, routes, Services.yaml
 
-docs/formlayer/       # Starlight documentation site
+docs/formlayer/       # Starlight docs (monorepo copy; source of truth → formlayer/docs/)
 ```
 
 ## Architecture principles
@@ -85,7 +82,7 @@ docs/formlayer/       # Starlight documentation site
 
 - `data-form-field` — field wrapper
 - `data-validate` — JSON validator rules
-- `data-field-type` — lazy-loaded field plugin (combobox, datepicker, altcha, …)
+- `data-field-type` — lazy-loaded field plugin (combobox, or optional `@formlayer/plugin-*` packages)
 - `data-loading` — toggled on submit button during submission (default loading UI)
 
 ### Event system
@@ -146,10 +143,13 @@ ddev exec vendor/bin/phpunit -c packages/sitepackage
 
 ```typescript
 import { formRegistry, initField, registerDefaultValidators } from 'formlayer';
-import { initTypo3Forms } from 'formlayer';
+import { initTypo3Forms } from 'formlayer/typo3';
+import 'formlayer/forms.css';
 ```
 
-Internal source uses relative imports; the `'formlayer'` package name is for docs and future npm distribution.
+The publishable npm package lives in `formlayer/`. The monorepo root `src/` is consumed by TYPO3 via `vite-plugin-typo3`.
+
+Internal monorepo source uses relative imports; `'formlayer'` package names are for the npm package and docs.
 
 ## Key files
 

@@ -12,7 +12,7 @@ export default defineConfig({
     outDir: resolve(__dirname, 'docs/formlayer/public/formlayer'),
     emptyOutDir: true,
     rollupOptions: {
-      external: ['air-datepicker', /^altcha/],
+      external: ['@formlayer/plugin-datepicker', '@formlayer/plugin-altcha', '@formlayer/plugin-altcha/typo3'],
     },
   },
 });

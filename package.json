@@ -18,7 +18,12 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "air-datepicker": "^3.6.0",
-    "altcha": "^3.0.9"
+    "@formlayer/plugin-altcha": "file:formlayer/packages/plugin-altcha",
+    "@formlayer/plugin-datepicker": "file:formlayer/packages/plugin-datepicker",
+    "formlayer": "^0.1.2",
+    "formlayer-plugin-altcha": "^0.1.0",
+    "formlayer-plugin-client-variants": "^0.1.0",
+    "formlayer-plugin-combobox": "^0.1.0",
+    "formlayer-plugin-datepicker": "^0.1.0"
   }
 }
