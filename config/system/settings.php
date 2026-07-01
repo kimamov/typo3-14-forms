@@ -38,6 +38,11 @@ return [
             'loginLogo' => '',
             'loginLogoAlt' => '',
         ],
+        'index' => [
+            'defaultTransportInDevelopmentContext' => '0',
+            'enableDebugFileWriter' => '0',
+            'keepIndexLogEntriesDays' => '14',
+        ],
         'vite_asset_collector' => [
             'defaultManifest' => '_assets/vite/.vite/manifest.json',
             'devServerUri' => 'auto',

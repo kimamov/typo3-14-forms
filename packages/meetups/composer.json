@@ -1,0 +1,32 @@
+{
+    "name": "t13/meetups",
+    "type": "typo3-cms-extension",
+    "description": "Simple meetup/event management for TYPO3",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": "^14.3",
+        "typo3/cms-extbase": "^14.3",
+        "typo3/cms-fluid": "^14.3",
+        "typo3/cms-frontend": "^14.3",
+        "typo3/cms-fluid-styled-content": "^14.3"
+    },
+    "suggest": {
+        "lochmueller/index": "Index event detail pages for search engines or EXT:seal",
+        "lochmueller/seal": "Search events with the Search Engine Abstraction Layer"
+    },
+    "autoload": {
+        "psr-4": {
+            "T13\\Meetups\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "T13\\Meetups\\Tests\\": "Tests/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "meetups"
+        }
+    }
+}

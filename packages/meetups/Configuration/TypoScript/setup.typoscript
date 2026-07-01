@@ -1,0 +1,34 @@
+plugin.tx_meetups_event {
+    view {
+        templateRootPaths {
+            0 = EXT:meetups/Resources/Private/Templates/
+            10 = {$plugin.tx_meetups_event.view.templateRootPath}
+        }
+        partialRootPaths {
+            0 = EXT:meetups/Resources/Private/Partials/
+            10 = {$plugin.tx_meetups_event.view.partialRootPath}
+        }
+        layoutRootPaths {
+            0 = EXT:meetups/Resources/Private/Layouts/
+            10 = {$plugin.tx_meetups_event.view.layoutRootPath}
+        }
+    }
+
+    persistence {
+        storagePid = {$plugin.tx_meetups_event.persistence.storagePid}
+    }
+
+    settings {
+        list {
+            itemsPerPage = {$plugin.tx_meetups_event.settings.list.itemsPerPage}
+        }
+    }
+}
+
+# Set the page title to the event title on the meetup detail view.
+config.pageTitleProviders {
+    meetups_event {
+        provider = T13\Meetups\PageTitle\EventPageTitleProvider
+        before = record
+    }
+}

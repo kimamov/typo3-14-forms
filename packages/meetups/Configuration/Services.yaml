@@ -1,0 +1,16 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  T13\Meetups\:
+    resource: '../Classes/*'
+
+  # The frontend plugin controller must be public so TYPO3 can instantiate it.
+  T13\Meetups\Controller\EventController:
+    public: true
+
+  # Page title providers are pulled from the container by class name.
+  T13\Meetups\PageTitle\EventPageTitleProvider:
+    public: true

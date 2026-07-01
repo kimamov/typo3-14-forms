@@ -9,14 +9,19 @@
             "typo3/cms-composer-installers": true
         },
         "platform": {
-            "php": "8.2.0"
+            "php": "8.4.0"
         },
         "sort-packages": true
     },
     "require": {
         "bbysaeth/typo3-altcha": "^1.0@beta",
+        "cmsig/seal-loupe-adapter": "^0.12.15",
+        "cmsig/seal-memory-adapter": "^0.12.15",
+        "lochmueller/index": "^2.2",
+        "lochmueller/seal": "^1.1",
         "praetorius/vite-asset-collector": "^1.16",
         "t13-forms/sitepackage": "@dev",
+        "t13/meetups": "@dev",
         "typo3/cms-backend": "^14.3",
         "typo3/cms-belog": "^14.3",
         "typo3/cms-beuser": "^14.3",

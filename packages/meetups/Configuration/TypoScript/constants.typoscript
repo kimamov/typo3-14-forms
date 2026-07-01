@@ -1,0 +1,17 @@
+plugin.tx_meetups_event {
+    view {
+        templateRootPath =
+        partialRootPath =
+        layoutRootPath =
+    }
+
+    persistence {
+        storagePid = 5
+    }
+
+    settings {
+        list {
+            itemsPerPage = 10
+        }
+    }
+}

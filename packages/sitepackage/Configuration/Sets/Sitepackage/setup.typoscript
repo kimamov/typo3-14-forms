@@ -6,9 +6,31 @@ page {
         templateRootPaths.10 = EXT:sitepackage/Resources/Private/Templates/Pages/
         layoutRootPaths.10 = EXT:sitepackage/Resources/Private/Layouts/
         partialRootPaths.10 = EXT:sitepackage/Resources/Private/Partials/
+
+        dataProcessing {
+            20 = menu
+        }
     }
+
 }
 
 plugin.tx_form.view {
     templateRootPaths.20 = EXT:sitepackage/Resources/Private/Frontend/Templates/
+}
+
+plugin.tx_seal {
+    view {
+        templateRootPaths {
+            10 = EXT:seal/Resources/Private/Templates/
+            20 = EXT:sitepackage/Resources/Private/Frontend/Templates/
+        }
+        partialRootPaths {
+            10 = EXT:seal/Resources/Private/Partials/
+            20 = EXT:sitepackage/Resources/Private/Frontend/Partials/
+        }
+        layoutRootPaths {
+            10 = EXT:seal/Resources/Private/Layouts/
+            20 = EXT:sitepackage/Resources/Private/Frontend/Layouts/
+        }
+    }
 }

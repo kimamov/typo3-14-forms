@@ -1,0 +1,29 @@
+# Example route enhancer for the Meetups frontend plugin.
+# Copy the "routeEnhancers" block into your site configuration
+# (typically config/sites/<identifier>/config.yaml).
+
+routeEnhancers:
+  MeetupsPlugin:
+    type: Extbase
+    extension: Meetups
+    plugin: Event
+    routes:
+      - routePath: '/meetups'
+        _controller: 'Event::list'
+      - routePath: '/meetups/page-{page}'
+        _controller: 'Event::list'
+        _arguments:
+          page: currentPage
+        requirements:
+          page: '\d+'
+      - routePath: '/meetup/{event}'
+        _controller: 'Event::show'
+        _arguments:
+          event: event
+    defaultController: 'Event::list'
+    aspects:
+      event:
+        type: PersistedAliasMapper
+        tableName: tx_meetups_domain_model_event
+        routeFieldName: title
+        routeValuePrefix: ''

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="EXT:meetups/Resources/Private/Language/locallang.xlf" date="2026-07-01T10:00:00Z" product-name="meetups">
+        <header/>
+        <body>
+            <trans-unit id="plugin.event.title" resname="plugin.event.title">
+                <source>Meetups</source>
+            </trans-unit>
+            <trans-unit id="plugin.event.description" resname="plugin.event.description">
+                <source>List and detail view for meetup events.</source>
+            </trans-unit>
+
+            <trans-unit id="event" resname="event">
+                <source>Event</source>
+            </trans-unit>
+            <trans-unit id="event.title" resname="event.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="event.description" resname="event.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="event.start_date" resname="event.start_date">
+                <source>Start date</source>
+            </trans-unit>
+            <trans-unit id="event.end_date" resname="event.end_date">
+                <source>End date</source>
+            </trans-unit>
+            <trans-unit id="event.location" resname="event.location">
+                <source>Location</source>
+            </trans-unit>
+            <trans-unit id="event.max_participants" resname="event.max_participants">
+                <source>Maximum participants</source>
+            </trans-unit>
+            <trans-unit id="event.canceled" resname="event.canceled">
+                <source>Canceled</source>
+            </trans-unit>
+
+            <trans-unit id="list.heading" resname="list.heading">
+                <source>Upcoming events</source>
+            </trans-unit>
+            <trans-unit id="list.no_events" resname="list.no_events">
+                <source>No events found.</source>
+            </trans-unit>
+            <trans-unit id="list.read_more" resname="list.read_more">
+                <source>Read more</source>
+            </trans-unit>
+
+            <trans-unit id="show.back_to_list" resname="show.back_to_list">
+                <source>Back to overview</source>
+            </trans-unit>
+            <trans-unit id="show.canceled" resname="show.canceled">
+                <source>This event has been canceled.</source>
+            </trans-unit>
+
+            <trans-unit id="new.heading" resname="new.heading">
+                <source>Create event</source>
+            </trans-unit>
+            <trans-unit id="new.submit" resname="new.submit">
+                <source>Create event</source>
+            </trans-unit>
+
+            <trans-unit id="event.created" resname="event.created">
+                <source>The event has been created.</source>
+            </trans-unit>
+            <trans-unit id="event.error.invalid" resname="event.error.invalid">
+                <source>Please check your input. Title, start date and location are required.</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,5 @@
+<div class="grid gap-6">
+    <f:for each="{paginator.paginatedItems}" as="item">
+        <f:render partial="Result/Item" arguments="{item: item}"/>
+    </f:for>
+</div>
