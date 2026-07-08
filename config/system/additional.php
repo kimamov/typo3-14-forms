@@ -38,11 +38,11 @@ if (getenv('IS_DDEV_PROJECT') == 'true') {
                 ],
             ],
             'FE' => [
-                'cacheHash'=>[
-                    'excludedParameters' => [
-                        '^tx_seal_search'
-                    ]
-                ]
+//                'cacheHash'=>[
+//                    'excludedParameters' => [
+//                        '^tx_seal_search'
+//                    ]
+//                ]
             ]
         ]
     );
