@@ -1,0 +1,62 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:variable name="bp" value="{settings.container.stackBreakpoint}" />
+
+<f:variable name="bgMap" value="{none:'', light:'bg-gray-50', dark:'bg-gray-900 text-white', primary:'bg-blue-600 text-white', accent:'bg-amber-500 text-white'}" />
+<f:variable name="fwMap" value="{default:'px-4', full:'px-0'}" />
+<f:variable name="mwMap" value="{default:'max-w-6xl mx-auto', sm:'max-w-screen-sm mx-auto', md:'max-w-screen-md mx-auto', lg:'max-w-screen-lg mx-auto', xl:'max-w-screen-xl mx-auto', full:'max-w-full'}" />
+<f:variable name="mtMap" value="{none:'', sm:'mt-4', md:'mt-8', lg:'mt-16', xl:'mt-24'}" />
+<f:variable name="mbMap" value="{none:'', sm:'mb-4', md:'mb-8', lg:'mb-16', xl:'mb-24'}" />
+<f:variable name="stackMap" value="{default:'flex flex-col', reverse:'flex flex-col-reverse'}" />
+
+<f:variable name="wrapperClasses" value="{mwMap.{data.tx_sitepackage_container_max_width}} {bgMap.{data.tx_sitepackage_container_bgcolor}} {fwMap.{data.tx_sitepackage_container_full_width}} {mtMap.{data.tx_sitepackage_container_space_before}} {mbMap.{data.tx_sitepackage_container_space_after}}" />
+<f:variable name="stackClasses" value="{stackMap.{data.tx_sitepackage_container_stack_order}}" />
+
+<f:switch expression="{data.tx_sitepackage_container_layout_3col}">
+    <f:case value="wide_center">
+        <f:variable name="gridClasses" value="{stackClasses} {bp}:grid {bp}:grid-cols-4 gap-6" />
+        <f:variable name="leftSpan" value="{bp}:col-span-1" />
+        <f:variable name="centerSpan" value="{bp}:col-span-2" />
+        <f:variable name="rightSpan" value="{bp}:col-span-1" />
+    </f:case>
+    <f:case value="wide_left">
+        <f:variable name="gridClasses" value="{stackClasses} {bp}:grid {bp}:grid-cols-4 gap-6" />
+        <f:variable name="leftSpan" value="{bp}:col-span-2" />
+        <f:variable name="centerSpan" value="{bp}:col-span-1" />
+        <f:variable name="rightSpan" value="{bp}:col-span-1" />
+    </f:case>
+    <f:case value="wide_right">
+        <f:variable name="gridClasses" value="{stackClasses} {bp}:grid {bp}:grid-cols-4 gap-6" />
+        <f:variable name="leftSpan" value="{bp}:col-span-1" />
+        <f:variable name="centerSpan" value="{bp}:col-span-1" />
+        <f:variable name="rightSpan" value="{bp}:col-span-2" />
+    </f:case>
+    <f:defaultCase>
+        <f:variable name="gridClasses" value="{stackClasses} {bp}:grid {bp}:grid-cols-3 gap-6" />
+        <f:variable name="leftSpan" value="" />
+        <f:variable name="centerSpan" value="" />
+        <f:variable name="rightSpan" value="" />
+    </f:defaultCase>
+</f:switch>
+
+<section class="{wrapperClasses} w-full">
+    <div class="mx-auto max-w-6xl {gridClasses}">
+        <div class="{leftSpan}">
+            <f:for each="{children_left}" as="child">
+                <f:format.raw>{child.renderedContent}</f:format.raw>
+            </f:for>
+        </div>
+        <div class="{centerSpan}">
+            <f:for each="{children_center}" as="child">
+                <f:format.raw>{child.renderedContent}</f:format.raw>
+            </f:for>
+        </div>
+        <div class="{rightSpan}">
+            <f:for each="{children_right}" as="child">
+                <f:format.raw>{child.renderedContent}</f:format.raw>
+            </f:for>
+        </div>
+    </div>
+</section>
+
+</html>

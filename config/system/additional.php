@@ -37,6 +37,13 @@ if (getenv('IS_DDEV_PROJECT') == 'true') {
                     'useDevServer' => getenv('EXT_VITE_USE_DEV_SERVER') ?: 'auto',
                 ],
             ],
+            'FE' => [
+                'cacheHash'=>[
+                    'excludedParameters' => [
+                        '^tx_seal_search'
+                    ]
+                ]
+            ]
         ]
     );
 }

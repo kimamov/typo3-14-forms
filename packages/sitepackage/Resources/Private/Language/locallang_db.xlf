@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="labels_db.xlf" product-name="sitepackage">
+        <header/>
+        <body>
+            <trans-unit id="container.two_columns.label">
+                <source>Container: Two Columns</source>
+            </trans-unit>
+            <trans-unit id="container.two_columns.description">
+                <source>Two-column grid container with selectable sizes.</source>
+            </trans-unit>
+            <trans-unit id="container.three_columns.label">
+                <source>Container: Three Columns</source>
+            </trans-unit>
+            <trans-unit id="container.three_columns.description">
+                <source>Three-column grid container with selectable sizes.</source>
+            </trans-unit>
+
+            <trans-unit id="container.section.label">
+                <source>Container: Section</source>
+            </trans-unit>
+            <trans-unit id="container.section.description">
+                <source>Single-column section that centers content within a maximum width.</source>
+            </trans-unit>
+
+            <trans-unit id="container.column.left">
+                <source>Left</source>
+            </trans-unit>
+            <trans-unit id="container.column.center">
+                <source>Center</source>
+            </trans-unit>
+            <trans-unit id="container.column.right">
+                <source>Right</source>
+            </trans-unit>
+            <trans-unit id="container.column.content">
+                <source>Content</source>
+            </trans-unit>
+
+            <trans-unit id="container.palette.style">
+                <source>Appearance</source>
+            </trans-unit>
+
+            <trans-unit id="container.layout_2col.label">
+                <source>Column sizes</source>
+            </trans-unit>
+            <trans-unit id="container.layout_2col.option.equal">
+                <source>Equal (1 : 1)</source>
+            </trans-unit>
+            <trans-unit id="container.layout_2col.option.left_wide">
+                <source>Left wide (2 : 1)</source>
+            </trans-unit>
+            <trans-unit id="container.layout_2col.option.right_wide">
+                <source>Right wide (1 : 2)</source>
+            </trans-unit>
+
+            <trans-unit id="container.layout_3col.label">
+                <source>Column sizes</source>
+            </trans-unit>
+            <trans-unit id="container.layout_3col.option.equal">
+                <source>Equal (1 : 1 : 1)</source>
+            </trans-unit>
+            <trans-unit id="container.layout_3col.option.wide_center">
+                <source>Wide center (1 : 2 : 1)</source>
+            </trans-unit>
+            <trans-unit id="container.layout_3col.option.wide_left">
+                <source>Wide left (2 : 1 : 1)</source>
+            </trans-unit>
+            <trans-unit id="container.layout_3col.option.wide_right">
+                <source>Wide right (1 : 1 : 2)</source>
+            </trans-unit>
+
+            <trans-unit id="container.max_width.label">
+                <source>Maximum width</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.default">
+                <source>Default (content width)</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.sm">
+                <source>Small</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.md">
+                <source>Medium</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.lg">
+                <source>Large</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.xl">
+                <source>Extra large</source>
+            </trans-unit>
+            <trans-unit id="container.max_width.option.full">
+                <source>Full width</source>
+            </trans-unit>
+
+            <trans-unit id="container.bgcolor.label">
+                <source>Background</source>
+            </trans-unit>
+            <trans-unit id="container.bgcolor.option.none">
+                <source>None</source>
+            </trans-unit>
+            <trans-unit id="container.bgcolor.option.light">
+                <source>Light</source>
+            </trans-unit>
+            <trans-unit id="container.bgcolor.option.dark">
+                <source>Dark</source>
+            </trans-unit>
+            <trans-unit id="container.bgcolor.option.primary">
+                <source>Primary</source>
+            </trans-unit>
+            <trans-unit id="container.bgcolor.option.accent">
+                <source>Accent</source>
+            </trans-unit>
+
+            <trans-unit id="container.full_width.label">
+                <source>Full width</source>
+            </trans-unit>
+            <trans-unit id="container.full_width.description">
+                <source>Contained adds horizontal padding; full width spans edge-to-edge.</source>
+            </trans-unit>
+            <trans-unit id="container.full_width.option.default">
+                <source>Contained</source>
+            </trans-unit>
+            <trans-unit id="container.full_width.option.full">
+                <source>Full width</source>
+            </trans-unit>
+
+            <trans-unit id="container.space_before.label">
+                <source>Space before</source>
+            </trans-unit>
+            <trans-unit id="container.space_after.label">
+                <source>Space after</source>
+            </trans-unit>
+            <trans-unit id="container.space.option.none">
+                <source>None</source>
+            </trans-unit>
+            <trans-unit id="container.space.option.sm">
+                <source>Small</source>
+            </trans-unit>
+            <trans-unit id="container.space.option.md">
+                <source>Medium</source>
+            </trans-unit>
+            <trans-unit id="container.space.option.lg">
+                <source>Large</source>
+            </trans-unit>
+            <trans-unit id="container.space.option.xl">
+                <source>Extra large</source>
+            </trans-unit>
+
+            <trans-unit id="container.stack_order.label">
+                <source>Mobile stacking order</source>
+            </trans-unit>
+            <trans-unit id="container.stack_order.description">
+                <source>Order in which columns stack below the site-wide stacking breakpoint.</source>
+            </trans-unit>
+            <trans-unit id="container.stack_order.option.default">
+                <source>Default</source>
+            </trans-unit>
+            <trans-unit id="container.stack_order.option.reverse">
+                <source>Reverse</source>
+            </trans-unit>
+
+            <trans-unit id="settings.container.stackBreakpoint.label">
+                <source>Container stacking breakpoint</source>
+            </trans-unit>
+            <trans-unit id="settings.container.stackBreakpoint.description">
+                <source>Viewport width at which containers switch from stacked (mobile) to side-by-side (desktop). Valid Tailwind tokens: sm, md, lg, xl.</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="labels.xlf" product-name="sitepackage/hero">
+        <header/>
+        <body>
+            <trans-unit id="title">
+                <source>Hero Section</source>
+            </trans-unit>
+            <trans-unit id="description">
+                <source>Large hero area with headline, text and a call-to-action button.</source>
+            </trans-unit>
+            <trans-unit id="header.label">
+                <source>Headline</source>
+            </trans-unit>
+            <trans-unit id="bodytext.label">
+                <source>Intro text</source>
+            </trans-unit>
+            <trans-unit id="cta_link.label">
+                <source>Call-to-action link</source>
+            </trans-unit>
+            <trans-unit id="cta_label.label">
+                <source>Button label</source>
+            </trans-unit>
+            <trans-unit id="background_image.label">
+                <source>Background image</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

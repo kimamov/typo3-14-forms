@@ -1,0 +1,19 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:variable name="iconClass" value="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-2xl text-rose-600" />
+
+<f:switch expression="{icon}">
+    <f:case value="travel"><span class="{iconClass}">✈️</span></f:case>
+    <f:case value="social"><span class="{iconClass}">👥</span></f:case>
+    <f:case value="hobbies"><span class="{iconClass}">❤️</span></f:case>
+    <f:case value="sport"><span class="{iconClass}">🏆</span></f:case>
+    <f:case value="health"><span class="{iconClass}">⚕️</span></f:case>
+    <f:case value="technology"><span class="{iconClass}">💻</span></f:case>
+    <f:case value="art"><span class="{iconClass}">🎨</span></f:case>
+    <f:case value="games"><span class="{iconClass}">🎮</span></f:case>
+    <f:case value="career"><span class="{iconClass}">💼</span></f:case>
+    <f:case value="science"><span class="{iconClass}">🔬</span></f:case>
+    <f:defaultCase><span class="{iconClass}">🏷️</span></f:defaultCase>
+</f:switch>
+
+</html>

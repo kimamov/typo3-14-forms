@@ -1,10 +1,10 @@
 base: 'https://t3-forms.ddev.site'
 dependencies:
   - typo3/form
-  - t13-forms/sitepackage
   - lochmueller/seal
   - t13/meetups
   - typo3/felogin
+  - t13-forms/sitepackage
 languages:
   -
     title: English
@@ -17,26 +17,24 @@ languages:
     hreflang: ''
     websiteTitle: ''
 rootPageId: 1
-sealAutocompleteMinCharacters: '3'
-sealItemsPerPage: '10'
-sealPaginationClass: TYPO3\CMS\Core\Pagination\SimplePagination
-sealPaginationMaximumNumberOfLinks: '6'
-sealSearchDsn: 'typo3://'
 routeEnhancers:
   MeetupsPlugin:
     type: Extbase
     extension: Meetups
     plugin: Event
     routes:
-      - routePath: '/meetups'
+      -
+        routePath: /meetups
         _controller: 'Event::list'
-      - routePath: '/meetups/page-{page}'
+      -
+        routePath: '/meetups/page-{page}'
         _controller: 'Event::list'
         _arguments:
           page: currentPage
         requirements:
-          page: '\d+'
-      - routePath: '/meetup/{event}'
+          page: \d+
+      -
+        routePath: '/meetup/{event}'
         _controller: 'Event::show'
         _arguments:
           event: event
@@ -47,4 +45,9 @@ routeEnhancers:
         tableName: tx_meetups_domain_model_event
         routeFieldName: title
         routeValuePrefix: ''
+sealAutocompleteMinCharacters: '3'
+sealItemsPerPage: '10'
+sealPaginationClass: TYPO3\CMS\Core\Pagination\SimplePagination
+sealPaginationMaximumNumberOfLinks: '6'
+sealSearchDsn: 'typo3://'
 websiteTitle: ''

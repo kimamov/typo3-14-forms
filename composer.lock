@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28c9aa73d5fbdfa5710bb788d7bb88d0",
+    "content-hash": "1b45d3feb3745a19c45a0d97ec131704",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -52,6 +52,72 @@
                 "source": "https://github.com/altcha-org/altcha-lib-php/tree/v2.0.2"
             },
             "time": "2026-04-29T07:31:42+00:00"
+        },
+        {
+            "name": "b13/container",
+            "version": "4.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/b13/container.git",
+                "reference": "0f95a609776fddd6e42bebcbe85730f0406e6d39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/b13/container/zipball/0f95a609776fddd6e42bebcbe85730f0406e6d39",
+                "reference": "0f95a609776fddd6e42bebcbe85730f0406e6d39",
+                "shasum": ""
+            },
+            "require": {
+                "typo3/cms-backend": "^13.4 || ^14.3"
+            },
+            "replace": {
+                "typo3-ter/container": "self.version"
+            },
+            "require-dev": {
+                "b13/container-example": "dev-master",
+                "codeception/codeception": "^5.1",
+                "codeception/module-asserts": "^3.0",
+                "codeception/module-db": "^3.1",
+                "codeception/module-webdriver": "^4.0",
+                "friendsofphp/php-cs-fixer": "^3.51",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^11.3",
+                "typo3/cms-fluid-styled-content": "^13.4 || ^14.3",
+                "typo3/cms-info": "^13.4 || ^14.3",
+                "typo3/cms-install": "^13.4 || ^14.3",
+                "typo3/cms-workspaces": "^13.4 || ^14.3",
+                "typo3/coding-standards": "^0.5.5",
+                "typo3/testing-framework": "^9.1"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "providesPackages": []
+                    },
+                    "app-dir": ".Build",
+                    "version": "4.0.2",
+                    "web-dir": ".Build/Web",
+                    "extension-key": "container",
+                    "cms-package-dir": "{$vendor-dir}/typo3/cms"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "B13\\Container\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Container Content Elements - Create Custom Container Content Elements for TYPO3",
+            "homepage": "https://b13.com",
+            "support": {
+                "issues": "https://github.com/b13/container/issues",
+                "source": "https://github.com/b13/container/tree/4.0.2"
+            },
+            "time": "2026-06-26T16:40:39+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -1215,6 +1281,95 @@
             "time": "2026-06-11T17:54:14+00:00"
         },
         {
+            "name": "friendsoftypo3/content-blocks",
+            "version": "2.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfTYPO3/content-blocks.git",
+                "reference": "9f2b13b5f605cd6576b9a1dec10b559c59af3c66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfTYPO3/content-blocks/zipball/9f2b13b5f605cd6576b9a1dec10b559c59af3c66",
+                "reference": "9f2b13b5f605cd6576b9a1dec10b559c59af3c66",
+                "shasum": ""
+            },
+            "require": {
+                "opis/json-schema": "^2.6",
+                "php": "^8.2",
+                "symfony/console": "^7.4",
+                "symfony/dependency-injection": "^7.4",
+                "symfony/filesystem": "^7.4",
+                "symfony/finder": "^7.4",
+                "symfony/var-exporter": "^7.4 || ^8.0",
+                "symfony/yaml": "^7.4",
+                "typo3/cms-backend": "^14.3",
+                "typo3/cms-core": "^14.3",
+                "typo3/cms-fluid": "^14.3",
+                "typo3/cms-frontend": "^14.3"
+            },
+            "replace": {
+                "contentblocks/content-blocks": "*"
+            },
+            "require-dev": {
+                "bnf/phpstan-psr-container": "^1.1",
+                "contentblocks/examples": "@dev",
+                "friendsofphp/php-cs-fixer": "^3.22",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "typo3/cms-extbase": "^14.3",
+                "typo3/cms-extensionmanager": "^14.3",
+                "typo3/cms-filelist": "^14.3",
+                "typo3/cms-install": "^14.3",
+                "typo3/cms-lowlevel": "^14.3",
+                "typo3/cms-rte-ckeditor": "^14.3",
+                "typo3/cms-tstemplate": "^14.3",
+                "typo3/cms-workspaces": "^14.3",
+                "typo3/coding-standards": "0.8.x-dev",
+                "typo3/testing-framework": "^9.5"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "serviceProvider": "TYPO3\\CMS\\ContentBlocks\\ServiceProvider",
+                        "providesPackages": {
+                            "opis/json-schema": "",
+                            "symfony/var-exporter": ""
+                        }
+                    },
+                    "version": "2.4.7",
+                    "web-dir": ".Build/public",
+                    "extension-key": "content_blocks"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TYPO3\\CMS\\ContentBlocks\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "TYPO3 Content Types Team",
+                    "email": "typo3cms@typo3.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TYPO3 CMS Content Blocks - Content Types API | Define reusable components via YAML",
+            "homepage": "https://typo3.org",
+            "support": {
+                "chat": "https://typo3.slack.com/archives/C8Z2UM50Q",
+                "docs": "https://docs.typo3.org/p/friendsoftypo3/content-blocks/main/en-us/",
+                "issues": "https://github.com/FriendsOfTYPO3/content-blocks/issues",
+                "source": "https://github.com/FriendsOfTYPO3/content-blocks"
+            },
+            "time": "2026-06-25T15:33:34+00:00"
+        },
+        {
             "name": "guzzlehttp/guzzle",
             "version": "7.13.1",
             "source": {
@@ -2232,6 +2387,196 @@
                 }
             ],
             "time": "2026-03-20T21:53:25+00:00"
+        },
+        {
+            "name": "opis/json-schema",
+            "version": "2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/json-schema.git",
+                "reference": "8458763e0dd0b6baa310e04f1829fc73da4e8c8a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/8458763e0dd0b6baa310e04f1829fc73da4e8c8a",
+                "reference": "8458763e0dd0b6baa310e04f1829fc73da4e8c8a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "opis/string": "^2.1",
+                "opis/uri": "^1.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "ext-bcmath": "*",
+                "ext-intl": "*",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\JsonSchema\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                },
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                }
+            ],
+            "description": "Json Schema Validator for PHP",
+            "homepage": "https://opis.io/json-schema",
+            "keywords": [
+                "json",
+                "json-schema",
+                "schema",
+                "validation",
+                "validator"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/json-schema/issues",
+                "source": "https://github.com/opis/json-schema/tree/2.6.0"
+            },
+            "time": "2025-10-17T12:46:48+00:00"
+        },
+        {
+            "name": "opis/string",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/string.git",
+                "reference": "3e4d2aaff518ac518530b89bb26ed40f4503635e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/string/zipball/3e4d2aaff518ac518530b89bb26ed40f4503635e",
+                "reference": "3e4d2aaff518ac518530b89bb26ed40f4503635e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-json": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\String\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                },
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                }
+            ],
+            "description": "Multibyte strings as objects",
+            "homepage": "https://opis.io/string",
+            "keywords": [
+                "multi-byte",
+                "opis",
+                "string",
+                "string manipulation",
+                "utf-8"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/string/issues",
+                "source": "https://github.com/opis/string/tree/2.1.0"
+            },
+            "time": "2025-10-17T12:38:41+00:00"
+        },
+        {
+            "name": "opis/uri",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/uri.git",
+                "reference": "0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/uri/zipball/0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a",
+                "reference": "0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a",
+                "shasum": ""
+            },
+            "require": {
+                "opis/string": "^2.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\Uri\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                },
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                }
+            ],
+            "description": "Build, parse and validate URIs and URI-templates",
+            "homepage": "https://opis.io",
+            "keywords": [
+                "URI Template",
+                "parse url",
+                "punycode",
+                "uri",
+                "uri components",
+                "url",
+                "validate uri"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/uri/issues",
+                "source": "https://github.com/opis/uri/tree/1.1.0"
+            },
+            "time": "2021-05-22T15:57:08+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -6392,10 +6737,12 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/sitepackage",
-                "reference": "6e483c50da3c1af80bd17580f94ff604cdc9073b"
+                "reference": "9efed035bb2c26683adef023d038bec3c8388260"
             },
             "require": {
+                "b13/container": "^4.0",
                 "bbysaeth/typo3-altcha": "^1.0@beta",
+                "friendsoftypo3/content-blocks": "^2.4",
                 "praetorius/vite-asset-collector": "^1.16",
                 "typo3/cms-core": "^14.3",
                 "typo3/cms-fluid-styled-content": "^14.3",

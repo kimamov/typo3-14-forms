@@ -1,0 +1,55 @@
+name: sitepackage/category-grid
+group: default
+labelField: header
+fields:
+  - identifier: header
+    useExistingField: true
+  - identifier: categories
+    type: Collection
+    labelField: title
+    minitems: 1
+    maxitems: 20
+    appearance:
+      collapseAll: false
+      expandSingle: true
+      useSortable: true
+      enabledControls:
+        dragdrop: true
+        sort: true
+        hide: true
+        delete: true
+    fields:
+      - identifier: title
+        type: Text
+        required: true
+      - identifier: icon
+        type: Select
+        renderType: selectSingle
+        minitems: 1
+        items:
+          - label: 'Travel & Outdoor'
+            value: travel
+          - label: 'Social Activities'
+            value: social
+          - label: 'Hobbies & Passions'
+            value: hobbies
+          - label: 'Sport & Fitness'
+            value: sport
+          - label: 'Health & Wellness'
+            value: health
+          - label: 'Technology'
+            value: technology
+          - label: 'Art & Culture'
+            value: art
+          - label: 'Games'
+            value: games
+          - label: 'Career & Business'
+            value: career
+          - label: 'Science & Education'
+            value: science
+      - identifier: link
+        type: Link
+        allowedTypes:
+          - page
+          - url
+          - record

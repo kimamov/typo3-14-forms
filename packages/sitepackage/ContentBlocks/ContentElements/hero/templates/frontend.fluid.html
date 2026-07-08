@@ -1,0 +1,31 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<section class="relative isolate flex min-h-[28rem] w-full items-center justify-center overflow-hidden bg-slate-900 text-white">
+    <f:if condition="{data.background_image}">
+        <f:for each="{data.background_image}" as="image">
+            <f:image image="{image}" width="1600" class="absolute inset-0 h-full w-full object-cover opacity-40" />
+        </f:for>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-900/40"></div>
+    </f:if>
+
+    <div class="relative z-10 mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
+        <h1 class="mt-0 mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{data.header}</h1>
+
+        <f:if condition="{data.bodytext}">
+            <div class="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-slate-100">
+                <f:format.html>{data.bodytext}</f:format.html>
+            </div>
+        </f:if>
+
+        <f:if condition="{data.cta_link.url}">
+            <f:link.typolink parameter="{data.cta_link}" class="inline-flex items-center rounded-full bg-rose-600 px-8 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2">
+                <f:if condition="{data.cta_label}">
+                    <f:then>{data.cta_label}</f:then>
+                    <f:else>Mehr erfahren</f:else>
+                </f:if>
+            </f:link.typolink>
+        </f:if>
+    </div>
+</section>
+
+</html>

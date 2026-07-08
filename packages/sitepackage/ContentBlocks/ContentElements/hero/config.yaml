@@ -1,0 +1,22 @@
+name: sitepackage/hero
+group: default
+labelField: header
+fields:
+  - identifier: header
+    useExistingField: true
+  - identifier: bodytext
+    useExistingField: true
+    enableRichtext: true
+  - identifier: cta_link
+    type: Link
+    allowedTypes:
+      - page
+      - url
+      - record
+  - identifier: cta_label
+    type: Text
+  - identifier: background_image
+    type: File
+    allowed: common-image-types
+    maxitems: 1
+    extendedPalette: false

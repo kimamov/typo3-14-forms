@@ -11,6 +11,8 @@ $EM_CONF[$_EXTKEY] = [
             'typo3' => '14.0.0-14.99.99',
             'fluid_styled_content' => '',
             'form' => '',
+            'content_blocks' => '',
+            'container' => '',
             'vite_asset_collector' => '',
         ],
     ],

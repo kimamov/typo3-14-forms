@@ -14,9 +14,11 @@
         "sort-packages": true
     },
     "require": {
+        "b13/container": "^4.0",
         "bbysaeth/typo3-altcha": "^1.0@beta",
         "cmsig/seal-loupe-adapter": "^0.12.15",
         "cmsig/seal-memory-adapter": "^0.12.15",
+        "friendsoftypo3/content-blocks": "^2.4",
         "lochmueller/index": "^2.2",
         "lochmueller/seal": "^1.1",
         "praetorius/vite-asset-collector": "^1.16",

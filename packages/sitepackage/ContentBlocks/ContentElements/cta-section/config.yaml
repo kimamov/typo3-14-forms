@@ -1,0 +1,17 @@
+name: sitepackage/cta-section
+group: default
+labelField: header
+fields:
+  - identifier: header
+    useExistingField: true
+  - identifier: bodytext
+    useExistingField: true
+    enableRichtext: true
+  - identifier: cta_link
+    type: Link
+    allowedTypes:
+      - page
+      - url
+      - record
+  - identifier: cta_label
+    type: Text

@@ -6,6 +6,7 @@ page {
         templateRootPaths.10 = EXT:sitepackage/Resources/Private/Templates/Pages/
         layoutRootPaths.10 = EXT:sitepackage/Resources/Private/Layouts/
         partialRootPaths.10 = EXT:sitepackage/Resources/Private/Partials/
+        partialRootPaths.20 = EXT:sitepackage/Resources/Private/Frontend/Partials/
 
         dataProcessing {
             20 = menu
@@ -31,6 +32,88 @@ plugin.tx_seal {
         layoutRootPaths {
             10 = EXT:seal/Resources/Private/Layouts/
             20 = EXT:sitepackage/Resources/Private/Frontend/Layouts/
+        }
+    }
+}
+
+# ---------------------------------------------------------------------------
+# b13/container grid layouts
+# ---------------------------------------------------------------------------
+
+tt_content.sitepackage_container_two_columns < lib.contentElement
+tt_content.sitepackage_container_two_columns {
+    templateName = ContainerTwoColumns
+    templateRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Templates/Container/
+    }
+    partialRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Partials/Container/
+    }
+    layoutRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Layouts/
+    }
+    dataProcessing {
+        10 = B13\Container\DataProcessing\ContainerProcessor
+        10 {
+            colPos = 200
+            as = children_left
+        }
+        20 = B13\Container\DataProcessing\ContainerProcessor
+        20 {
+            colPos = 201
+            as = children_right
+        }
+    }
+}
+
+tt_content.sitepackage_container_three_columns < lib.contentElement
+tt_content.sitepackage_container_three_columns {
+    templateName = ContainerThreeColumns
+    templateRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Templates/Container/
+    }
+    partialRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Partials/Container/
+    }
+    layoutRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Layouts/
+    }
+    dataProcessing {
+        10 = B13\Container\DataProcessing\ContainerProcessor
+        10 {
+            colPos = 210
+            as = children_left
+        }
+        20 = B13\Container\DataProcessing\ContainerProcessor
+        20 {
+            colPos = 211
+            as = children_center
+        }
+        30 = B13\Container\DataProcessing\ContainerProcessor
+        30 {
+            colPos = 212
+            as = children_right
+        }
+    }
+}
+
+tt_content.sitepackage_container_section < lib.contentElement
+tt_content.sitepackage_container_section {
+    templateName = ContainerSection
+    templateRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Templates/Container/
+    }
+    partialRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Partials/Container/
+    }
+    layoutRootPaths {
+        20 = EXT:sitepackage/Resources/Private/Layouts/
+    }
+    dataProcessing {
+        10 = B13\Container\DataProcessing\ContainerProcessor
+        10 {
+            colPos = 220
+            as = children
         }
     }
 }

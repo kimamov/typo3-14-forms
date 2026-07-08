@@ -1,0 +1,43 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<section class="w-full bg-white py-16 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <f:if condition="{data.header}">
+            <h2 class="mt-0 mb-10 text-center text-3xl font-bold tracking-tight text-slate-900">{data.header}</h2>
+        </f:if>
+
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <f:for each="{data.cards}" as="card">
+                <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <f:if condition="{card.image}">
+                        <div class="aspect-[16/10] overflow-hidden bg-slate-100">
+                            <f:for each="{card.image}" as="image">
+                                <f:image image="{image}" width="600" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                            </f:for>
+                        </div>
+                    </f:if>
+
+                    <div class="flex flex-1 flex-col p-6">
+                        <h3 class="mb-2 text-xl font-semibold text-slate-900">{card.title}</h3>
+
+                        <f:if condition="{card.bodytext}">
+                            <div class="mb-4 text-slate-600">
+                                <f:format.html>{card.bodytext}</f:format.html>
+                            </div>
+                        </f:if>
+
+                        <f:if condition="{card.link.url}">
+                            <div class="mt-auto">
+                                <f:link.typolink parameter="{card.link}" class="font-medium text-rose-600 hover:text-rose-700">
+                                    Mehr erfahren →
+                                </f:link.typolink>
+                            </div>
+                        </f:if>
+                    </div>
+                </article>
+            </f:for>
+        </div>
+    </div>
+</section>
+
+</html>

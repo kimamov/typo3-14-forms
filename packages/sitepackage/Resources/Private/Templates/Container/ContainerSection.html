@@ -1,0 +1,21 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:variable name="bp" value="{settings.container.stackBreakpoint}" />
+
+<f:variable name="bgMap" value="{none:'', light:'bg-gray-50', dark:'bg-gray-900 text-white', primary:'bg-blue-600 text-white', accent:'bg-amber-500 text-white'}" />
+<f:variable name="mwMap" value="{default:'max-w-6xl mx-auto', sm:'max-w-screen-sm mx-auto', md:'max-w-screen-md mx-auto', lg:'max-w-screen-lg mx-auto', xl:'max-w-screen-xl mx-auto', full:'max-w-full'}" />
+<f:variable name="mtMap" value="{none:'', sm:'mt-4', md:'mt-8', lg:'mt-16', xl:'mt-24'}" />
+<f:variable name="mbMap" value="{none:'', sm:'mb-4', md:'mb-8', lg:'mb-16', xl:'mb-24'}" />
+
+<f:variable name="wrapperClasses" value="{bgMap.{data.tx_sitepackage_container_bgcolor}} {mtMap.{data.tx_sitepackage_container_space_before}} {mbMap.{data.tx_sitepackage_container_space_after}}" />
+<f:variable name="innerClasses" value="{mwMap.{data.tx_sitepackage_container_max_width}}" />
+
+<section class="{wrapperClasses} w-full">
+    <div class="{innerClasses} px-4 sm:px-6 lg:px-8">
+        <f:for each="{children}" as="child">
+            <f:format.raw>{child.renderedContent}</f:format.raw>
+        </f:for>
+    </div>
+</section>
+
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="labels.xlf" product-name="sitepackage/cta-section">
+        <header/>
+        <body>
+            <trans-unit id="title">
+                <source>CTA Section</source>
+            </trans-unit>
+            <trans-unit id="description">
+                <source>Full-width call-to-action section with headline and button.</source>
+            </trans-unit>
+            <trans-unit id="header.label">
+                <source>Headline</source>
+            </trans-unit>
+            <trans-unit id="bodytext.label">
+                <source>Intro text</source>
+            </trans-unit>
+            <trans-unit id="cta_link.label">
+                <source>Call-to-action link</source>
+            </trans-unit>
+            <trans-unit id="cta_label.label">
+                <source>Button label</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

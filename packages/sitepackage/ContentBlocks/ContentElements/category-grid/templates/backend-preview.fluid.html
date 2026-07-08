@@ -1,0 +1,10 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<div class="p-3">
+    <strong>{data.header}</strong>
+    <f:if condition="{data.categories}">
+        <span class="ml-2 text-xs text-slate-500">({data.categories -> f:count()} categories)</span>
+    </f:if>
+</div>
+
+</html>

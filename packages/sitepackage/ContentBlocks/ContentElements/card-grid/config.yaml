@@ -1,0 +1,38 @@
+name: sitepackage/card-grid
+group: default
+labelField: header
+fields:
+  - identifier: header
+    useExistingField: true
+  - identifier: cards
+    type: Collection
+    labelField: title
+    minitems: 1
+    maxitems: 12
+    appearance:
+      collapseAll: false
+      expandSingle: true
+      useSortable: true
+      enabledControls:
+        dragdrop: true
+        sort: true
+        hide: true
+        delete: true
+    fields:
+      - identifier: image
+        type: File
+        allowed: common-image-types
+        maxitems: 1
+        extendedPalette: false
+      - identifier: title
+        type: Text
+        required: true
+      - identifier: bodytext
+        type: Textarea
+        enableRichtext: true
+      - identifier: link
+        type: Link
+        allowedTypes:
+          - page
+          - url
+          - record

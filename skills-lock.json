@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "skills": {
+    "google-adsense": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-adsense/SKILL.md",
+      "computedHash": "20d78482a737812e680ddba4c45057a1b20d437414770cf35b01895230a4440f"
+    },
+    "google-adsense-search": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-adsense-search/SKILL.md",
+      "computedHash": "052f77af7707e77ec8cba0a4d3528a561c966a56782e61520349f98505595ea7"
+    },
+    "google-analytics": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-analytics/SKILL.md",
+      "computedHash": "32b255c1d0de8042c7b7b8d8f467747fdc01d7beda0d9b11704a98c58b83cfa9"
+    },
+    "google-cmp-adsense": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-cmp-adsense/SKILL.md",
+      "computedHash": "92f7dfe9c6f0d261d931eccd6839a579ad6e9d1904ea9e6c6724fee04c3e6bdf"
+    },
+    "google-tag-manager": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-tag-manager/SKILL.md",
+      "computedHash": "35b581be502fd5c504cf2ef76dcbe86fb25ec8ac594b679d1c07ce123cd71f64"
+    },
+    "tailwind-v4-workflow": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-v4-workflow/SKILL.md",
+      "computedHash": "d1b1453c8ac8aad9ac66a38959efd706222f662183ee0e2cdc9e7495824b07fe"
+    },
+    "typo3-container": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-container/SKILL.md",
+      "computedHash": "f1141a2641694a965d0b60877ee0b08896f4f76c2881126be700ba7f699bf23a"
+    },
+    "typo3-content-blocks": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-content-blocks/SKILL.md",
+      "computedHash": "0026625c0d7bd1aad66321dc73c419ce7cb9aa1000af2279eadea2e02bf38424"
+    },
+    "typo3-csp": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-csp/SKILL.md",
+      "computedHash": "da5a91c68d6e65eaac3d5aefd9b9186ba52159f72e7fcceccd80e0014b0dde94"
+    },
+    "typo3-extbase-plugin": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-extbase-plugin/SKILL.md",
+      "computedHash": "b9bacaa3bfcc04bd1b98d00344b4ade674a2edb268fb0d5e50c50fd19bcb39ad"
+    },
+    "typo3-favicon-manifest": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-favicon-manifest/SKILL.md",
+      "computedHash": "3fe9b062f9f94d18aee5d5da02238a8104aa08f4b0d26e592f43cee27eab7228"
+    },
+    "typo3-flexforms": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-flexforms/SKILL.md",
+      "computedHash": "b4d42edd4272e4277d4afdc7939e09d070bd981c51621f4068b30afd3eb12d21"
+    },
+    "typo3-fluid-patterns": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-fluid-patterns/SKILL.md",
+      "computedHash": "30a75638b29e7c6ee5d51379cdb855e65c75c7146355d45b4e05b1e4934ac3ae"
+    },
+    "typo3-form-yaml": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-form-yaml/SKILL.md",
+      "computedHash": "79016282209edc4d441eaa50ed78020781350238361e3ef17c5b7a78602d3633"
+    },
+    "typo3-language-menu": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-language-menu/SKILL.md",
+      "computedHash": "f45584dd52d30c22e7e8d04364013c60fd4fb8886baa2bf7364b69ab56f88aea"
+    },
+    "typo3-menu-dataprocessor": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-menu-dataprocessor/SKILL.md",
+      "computedHash": "510ed43e4ebdef28dcbe088798ec06982dfd8008ebc3087edf31705e82a191d6"
+    },
+    "typo3-merge-sitepackages": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-merge-sitepackages/SKILL.md",
+      "computedHash": "ba4e0ac387dabe9cdd551adaf0ee3c332623b1e5927ebb6a3bf50c16e2e001dd"
+    },
+    "typo3-news-extension": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-news-extension/SKILL.md",
+      "computedHash": "bcb54fd35d1987f2e1221cce56547078f163bda19956180be57796ebb6afde7e"
+    },
+    "typo3-playwright-ddev": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-playwright-ddev/SKILL.md",
+      "computedHash": "fd9da35480b7be7eba39aa2ee6e751189318d7ae632bb6e2d3dd076af4b26e06"
+    },
+    "typo3-playwright-workflow": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-playwright-workflow/SKILL.md",
+      "computedHash": "032d7ea4d5a381b0d447132ebc475e7e941f1e5d4d422adf4d4f267dac0a247d"
+    },
+    "typo3-rich-snippets": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-rich-snippets/SKILL.md",
+      "computedHash": "50942fa7d5277f07fffb837a557dbf0934f41359655f4b1de7b9767fabeb89a4"
+    },
+    "typo3-route-enhancers": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-route-enhancers/SKILL.md",
+      "computedHash": "cc3495215d77cd37a582c1cd5fcf80c542369066ace270e5c90c4815cd860114"
+    },
+    "typo3-rte-ckeditor": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-rte-ckeditor/SKILL.md",
+      "computedHash": "1e0ae5c5651fffa68f63cadf99ab7c2105eb8897c2cce41c7b4a45d6dcfc5136"
+    },
+    "typo3-scheduler-task": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-scheduler-task/SKILL.md",
+      "computedHash": "d38e9ac9fbedd873f5678365ddc7697537575d9c434daa04410d81adf80da77b"
+    },
+    "typo3-secure-form": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-secure-form/SKILL.md",
+      "computedHash": "cdfa7238dd9e401196cc4f75a6e2a8b95d6e9a33bdbd8c99153de17284156198"
+    },
+    "typo3-site-config-sets": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-site-config-sets/SKILL.md",
+      "computedHash": "3266c6cd402aedee9578726a98c320ddfc2f195588d687126da94236599c6d34"
+    },
+    "typo3-tailwind-migration": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-tailwind-migration/SKILL.md",
+      "computedHash": "b037fe176f063e1623fe94b26c1df528051c1145a5281a1d9d11c040bc33d530"
+    },
+    "typo3-translatable-extension-data": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-translatable-extension-data/SKILL.md",
+      "computedHash": "cc0ab71bd27f7e7522ff3b98086d07d4b890ab55cef68ab28d6a15a8ecdeda09"
+    },
+    "typo3-typoscript-conditions": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-typoscript-conditions/SKILL.md",
+      "computedHash": "ebb865df14fbfbaf04b982bfcc543bcc42194456e0f846d4a0bf5a5c3fc04ac3"
+    },
+    "typo3-v11-to-v12-upgrade": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-v11-to-v12-upgrade/SKILL.md",
+      "computedHash": "3fe25e5f964c58ef3fb7bd40b7236e5848ab01de2f36a88430890547fb84086b"
+    },
+    "typo3-v12-to-v13-upgrade": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-v12-to-v13-upgrade/SKILL.md",
+      "computedHash": "be84023600fbfd0a74c7772742470438b26f0bd06396cb88fc3168a1fd3a8040"
+    },
+    "typo3-v13-to-v14-upgrade": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-v13-to-v14-upgrade/SKILL.md",
+      "computedHash": "7f731d27cc22ba3264a0f96fdeeb5b03d23725bd211d735963a3576f7e39fa8f"
+    },
+    "typo3-xml-sitemap": {
+      "source": "Starraider/typo3-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typo3-xml-sitemap/SKILL.md",
+      "computedHash": "905c14cdfaa5e1af547817b5685edb46a6dcca2517aa092232d98821ff095259"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+settings:
+  container.stackBreakpoint:
+    type: string
+    default: md
+    label: 'LLL:EXT:sitepackage/Resources/Private/Language/locallang_db.xlf:settings.container.stackBreakpoint.label'
+    description: 'LLL:EXT:sitepackage/Resources/Private/Language/locallang_db.xlf:settings.container.stackBreakpoint.description'
+    enum:
+      sm: Small
+      md: Medium
+      lg: Large
+      xl: Extra Large
