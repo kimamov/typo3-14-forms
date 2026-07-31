@@ -21,6 +21,7 @@
         "friendsoftypo3/content-blocks": "^2.4",
         "lochmueller/index": "^2.2",
         "lochmueller/seal": "^1.1",
+        "mir/headless-cache": "@dev",
         "praetorius/vite-asset-collector": "^1.16",
         "t13-forms/sitepackage": "@dev",
         "t13/meetups": "@dev",

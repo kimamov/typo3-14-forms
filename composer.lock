@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b45d3feb3745a19c45a0d97ec131704",
+    "content-hash": "0a9325527ad58232c33df1acd4e91564",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -2176,6 +2176,42 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.10.1"
             },
             "time": "2026-06-23T18:43:15+00:00"
+        },
+        {
+            "name": "mir/headless-cache",
+            "version": "dev-typo3-14-extseal-test",
+            "dist": {
+                "type": "path",
+                "url": "./packages/headless_cache",
+                "reference": "64aba6c63d4806ea7ba5cac924f00f1658e586aa"
+            },
+            "require": {
+                "typo3/cms-core": "^14.3",
+                "typo3/cms-extbase": "^14.3",
+                "typo3/cms-fluid": "^14.3",
+                "typo3/cms-fluid-styled-content": "^14.3",
+                "typo3/cms-frontend": "^14.3"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "headless_cache"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mir\\HeadlessCache\\": "Classes/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Mir\\HeadlessCache\\Tests\\": "Tests/"
+                }
+            },
+            "description": "Sync Typo3 page cache invalidations via Webhook",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "mjaschen/phpgeo",
@@ -10725,6 +10761,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "bbysaeth/typo3-altcha": 10,
+        "mir/headless-cache": 20,
         "t13-forms/sitepackage": 20,
         "t13/meetups": 20
     },
